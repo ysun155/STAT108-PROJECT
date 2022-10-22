@@ -33,7 +33,9 @@ The source for state abortion policy is AGI, which was collected from the Americ
 
 
 ```{R}
-glimpse(read.csv("data/abortion_data.csv"))
+library(tidyverse)
+df <- read.csv("data/abortion_data.csv")
+glimpse(df)
 ```
 
 
