@@ -27,5 +27,6 @@
  
 [10] **Median cost of second trimester procedural abortion services** - The median self-pay costs for second trimester procedural abortion services, in U.S. dollars.
 
-[11] **Fertility rate 2020** - General fertility rate per 1,000 women aged 15–44.                                         
+[11] **Fertility rate 2020** - General fertility rate per 1,000 women aged 15–44. 
+
 [12] **Maternal mortality rate per 100,000 births 2018 - 2020** - Maternal mortality rates per 100,000 births from 2018 to 2020.
