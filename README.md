@@ -1,4 +1,4 @@
-# STAT108-PROJECT
+## Examining the impact of state-level restrictive regulations on abortions in the United States.
 
 ## Introduction
 
@@ -13,41 +13,44 @@ implemented regulations promoting abortion scarcity and leading to
 barriers to care in recent decades (Wolfe & van der Meulen Rodgers,
 2021). For instance, Texas’ House Bill 2 and Louisiana law required all
 abortion providers to maintain admitting privileges at a nearby hospital
-(Arnold, 2022). It’s crucial to highlight the similar but more
-restrictive forms of laws commonly known as “Targeted Regulation of
-Abortion Providers” (TRAP) Laws that put stringent and unnecessary
-requirements on abortion providers (Austin & Harper, 2018). In 2017, 89%
-of counties in the United States have no abortion providers within their
-borders. People were forced to travel more than 100 miles to receive
-abortion services as of 2018 in 27 cities (Smith et al., 2022).
+(Arnold, 2022). It’s crucial to highlight the more restrictive forms of
+laws commonly known as “Targeted Regulation of Abortion Providers”
+(TRAP) Laws that put stringent and unnecessary requirements on abortion
+providers (Austin & Harper, 2018). In 2017, 89% of counties in the
+United States have no abortion providers within their borders. People
+were forced to travel more than 100 miles to receive abortion services
+as of 2018 in 27 cities (Smith et al., 2022).
 
-Even while laws are widespread, few studies accessing the impact of such
+Even while laws are widespread, few studies assessed the impact of such
 regulations on abortions and fertility. For instance, Ellertson (1997)
 found a decrease in the in-state abortion rate and delay in abortions
 when parental involvement laws took effect, which implies the increased
 odds of traveling out of state for abortions. Also, Addante et
 al. (2021) concluded that states with more restrictive abortions have
 higher maternal mortality than states with moderate or protective
-abortions. Such scarcity of research is particularly noteworthy after
-the overturn of Roe v. Wade, which emphasized the importance of
-providing solid evidence-based research on the potential impact of
-regulations restricting access to abortion care (Arnold, 2022).
+abortions from 1995 to 2017. Most articles evaluate policy effects from
+2006 or earlier, possibly prior to the more recent surge in regulation
+enactment (Austin & Harper, 2018). Such scarcity of research is
+particularly noteworthy after the overturn of Roe v. Wade, which
+emphasized the importance of providing solid evidence on the impact of
+regulations restricting access to abortion care in light of contemporary
+policy shifts (Arnold, 2022).
 
 At the same time, COVID-19’s introduction into a climate of abortion
 restrictions has increased the difficulties that providers and
-communities already face (Wolfe & van der Meulen Rodgers, 2021). **Our
+communities already face (Wolfe & van der Meulen Rodgers, 2021). Our
 study sought to assess the difference in abortion access and rate before
 and during COVID-19 and examine the impact of abortion barriers on
-abortion and fertility outcomes.** We hypothesize that increased
-barriers to care might result in a decrease in the in-state abortion
-rate and an increase in maternal mortality rate, but potentially an
-increase in traveling across state lines for abortion care.
+abortion and fertility outcomes. We hypothesize that increased barriers
+to care might result in a decrease in the in-state abortion rate and an
+increase in maternal mortality rate, but potentially an increase in
+traveling across state lines for abortion care.
 
 ## Data Collection
 
 ### Abortion and fertility data
 
-The two main sources for abortion data is the Centers for Disease
+The two main sources for abortion data are the Centers for Disease
 Control (CDC) and the Alan Guttmacher Institute (AGI). CDC is the
 national public health federal agency of the United States. AGI is a
 leading research and policy NGO committed to advancing sexual and
