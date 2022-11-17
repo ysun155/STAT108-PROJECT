@@ -48,31 +48,30 @@ traveling across state lines for abortion care.
 
 ## Data Collection
 
-### Abortion and fertility data
+### Abortion rate and maternal mortality rate
 
-The two main sources for abortion data are the Centers for Disease
-Control (CDC) and the Alan Guttmacher Institute (AGI). CDC is the
-national public health federal agency of the United States. AGI is a
-leading research and policy NGO committed to advancing sexual and
-reproductive health starting in 1968.
+The main source for abortion data is the Alan Guttmacher Institute
+(AGI), which is a leading research and policy nonprofit organization
+committed to advancing sexual and reproductive health starting in 1968.
+We collected abortion rate by state of occurrence, abortion rate by
+state of residence, and percentage of travelling out of states for
+abortion in 2020. AGI collects information by conducting a periodic
+survey of abortion providers, Abortion Provider Census, for each state
+beginning in 1973. With the number of abortions performed in each state
+(abortions by state of occurrence) as estimated from the survey, they
+reassigned abortions to patients’ states of residency using information
+collected by state abortion reporting agencies.
 
-Dataset from CDC reports the number of abortion incidence and rate by
-state of occurrence in 2017, 2019, and 2020. Each year, CDC requests
-abortion data from the central health agencies for 50 states, the
-District of Columbia, and New York City. Dataset from AGI contains the
-number of abortion incidence and rate by state of occurrence and state
-of residence in 2020. AGI collects information by conducting a direct
-survey of abortion providers for each state beginning in 1973.
+Maternal mortality rate is collected from Centers for Disease Control
+and Prevention (CDC), based from the National Vital Statistics System.
+This dataset includes maternal mortality rate per 100,000 live births
+from 2018 to 2020. Maternal deaths is defined to be deaths of women
+while pregnant or within 42 days of termination of pregnancy,
+irrespective of the duration and the site of the pregnancy, from any
+cause related to or aggravated by the pregnancy or its management, but
+not from accidental or incidental causes.
 
-### Abortion care and policy data
-
-The dataset for abortion care is collected from the Abortion Facility
-Database Project, Advancing New Standards in Reproductive Health
-(ANSIRH), at University of California San Francisco. It mainly provides
-the number of women of reproductive age per facility, gestational limit,
-and median cost of abortion services from 2017 to 2021. Data is offered
-by publicly advertising facilities across the United States from 2018
-through 2021.
+### Abortion policy and care data
 
 The source for state abortion policy is AGI, which was collected from
 the American Community Survey. States were scored based on whether they
@@ -84,23 +83,49 @@ restriction in effect. A state with a score of either positive or
 negative six has either all of the abortion restrictions or all of the
 protective measures in effect.
 
+The dataset for abortion care is collected from the Abortion Facility
+Database Project, Advancing New Standards in Reproductive Health
+(ANSIRH), at University of California San Francisco. It mainly provides
+the number of women of reproductive age per facility, gestational limit,
+and median cost of abortion services from 2017 to 2021. Data is offered
+by publicly advertising abortion facilities across the United States.
+
+Other risk factors, including education attainment and poverty, are
+collected from FRED Economic Data and United States Census Bureau
+respectively. The data about percentage of poverty of 2-year average
+(2019-2020) is based from Current Population Survey and 1960 to 2021
+Annual Social and Economic Supplements (CPS ASEC). Education attainment
+data including percentage of High School Graduate or Higher and
+Bachelor’s Degree of Higher in 2020 is based from the American Community
+Survey.
+
     glimpse(read.csv("data/abortion_data.csv"))
 
     ## Rows: 51
-    ## Columns: 13
-    ## $ X                                                            <int> 1, 2, 3, …
-    ## $ state                                                        <chr> "Alabama"…
-    ## $ rate.by.state.of.occurrence                                  <dbl> 6.0, 8.6,…
-    ## $ rate.by.state.of.residence                                   <dbl> 9.5, 9.2,…
-    ## $ Abortion.Law.Index                                           <int> -5, 2, -6…
-    ## $ Number.of.women.of.reproductive.age.per.facility             <int> 368957, 3…
-    ## $ Gestational.limit.for.medication.abortion..mean..range.      <chr> "10 (9-10…
-    ## $ Gestational.limit.for.procedural.abortion..mean..range.      <chr> "21 (14-2…
-    ## $ Median.cost.of.medication.abortion.services                  <int> 525, 800,…
-    ## $ Median.cost.of.first.trimester.procedural.abortion.services  <int> 500, 800,…
-    ## $ Median.cost.of.second.trimester.procedural.abortion.services <int> NA, 900, …
-    ## $ FERTILITY.RATE.2020                                          <dbl> 60.6, 65.…
-    ## $ Maternal.Mortality.Rate.per.100.000.birth.2018.2020          <dbl> 36.202111…
+    ## Columns: 23
+    ## $ state                                 <chr> "Alabama", "Alaska", "Arizona", …
+    ## $ abortion_rate_occurrence              <dbl> 6.0, 8.6, 9.3, 5.6, 19.2, 11.2, …
+    ## $ abortion_rate_residence               <dbl> 9.5, 9.2, 9.7, 7.8, 19.0, 9.9, 1…
+    ## $ percentage_of_travel                  <int> 47, 7, 6, 37, 0, 1, 6, 44, 45, 1…
+    ## $ maternal_mortality_rate               <dbl> 36.202111, 27.232188, 28.264675,…
+    ## $ policy_index                          <int> -5, 2, -6, -6, 6, 0, 3, -1, NA, …
+    ## $ fertility_rate                        <dbl> 60.6, 65.7, 54.0, 60.7, 52.4, 51…
+    ## $ facility_density                      <int> 368957, 32300, 201690, 335159, 5…
+    ## $ change_open_facilities                <int> 0, -1, 0, -1, 4, 3, -6, 0, -1, -…
+    ## $ facilities_only_procedural_abortion   <int> 33, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0…
+    ## $ Facilities_only_medication_abortion   <int> 0, 20, 13, 50, 54, 44, 50, 0, 0,…
+    ## $ Facilities_both                       <int> 67, 80, 88, 50, 44, 52, 50, 100,…
+    ## $ Gestational_limit_medication_abortion <int> 10, 11, 10, 11, 10, 11, 11, 11, …
+    ## $ Gestational_limit_procedural_abortion <int> 21, 14, 17, 21, 18, 20, 17, 16, …
+    ## $ cost_medication_abortion              <int> 525, 800, 605, 722, 680, 458, 65…
+    ## $ cost_first_trimester                  <int> 500, 800, 620, 625, 700, 540, 76…
+    ## $ cost_second_trimester                 <int> NA, 900, 1510, NA, 1170, 1500, 8…
+    ## $ Accepts_insurance                     <int> 0, 80, 63, 0, 93, 74, 100, 100, …
+    ## $ Number_of_independent_clinics         <int> 100, 20, 50, 50, 39, 48, 17, 0, …
+    ## $ Number_of_Planned_Parenthoods         <int> 0, 80, 50, 50, 61, 52, 83, 100, …
+    ## $ Bachelor_Degree                       <dbl> 27.8, 31.9, 33.0, 24.9, 36.9, 44…
+    ## $ High_School                           <dbl> 88.0, 93.7, 89.1, 88.2, 84.4, 92…
+    ## $ percentage_of_poverty                 <dbl> 13.9, 11.8, 10.4, 14.1, 10.6, 9.…
 
 ## References
 
@@ -119,6 +144,11 @@ Austin, N., & Harper, S. (2018, April 1). *Assessing the impact of trap
 laws on abortion and women’s health in the USA: A systematic review.*
 BMJ Sexual & Reproductive Health.
 <https://srh.bmj.com/content/44/2/128.abstract>
+
+Centers for Disease Control and Prevention, National Center for Health
+Statistics (NCHS), National Vital Statistics System, “*aternal deaths
+and mortality rates: Each state, the District of Columbia, United
+States, 2018‐2020*
 
 Ellertson, C. (1997, August). *Mandatory parental involvement in minors’
 abortions: Effects of the laws in Minnesota, Missouri, and Indiana.*
