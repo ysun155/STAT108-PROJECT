@@ -1,0 +1,126 @@
+"Notes"	"State"	"State Code"	"Year"	"Year Code"	Births
+	"Alabama"	"01"	"2020"	"2020"	57647
+"Total"	"Alabama"	"01"			57647
+	"Alaska"	"02"	"2020"	"2020"	9469
+"Total"	"Alaska"	"02"			9469
+	"Arizona"	"04"	"2020"	"2020"	76947
+"Total"	"Arizona"	"04"			76947
+	"Arkansas"	"05"	"2020"	"2020"	35251
+"Total"	"Arkansas"	"05"			35251
+	"California"	"06"	"2020"	"2020"	420259
+"Total"	"California"	"06"			420259
+	"Colorado"	"08"	"2020"	"2020"	61494
+"Total"	"Colorado"	"08"			61494
+	"Connecticut"	"09"	"2020"	"2020"	33460
+"Total"	"Connecticut"	"09"			33460
+	"Delaware"	"10"	"2020"	"2020"	10392
+"Total"	"Delaware"	"10"			10392
+	"District of Columbia"	"11"	"2020"	"2020"	8874
+"Total"	"District of Columbia"	"11"			8874
+	"Florida"	"12"	"2020"	"2020"	209671
+"Total"	"Florida"	"12"			209671
+	"Georgia"	"13"	"2020"	"2020"	122473
+"Total"	"Georgia"	"13"			122473
+	"Hawaii"	"15"	"2020"	"2020"	15785
+"Total"	"Hawaii"	"15"			15785
+	"Idaho"	"16"	"2020"	"2020"	21533
+"Total"	"Idaho"	"16"			21533
+	"Illinois"	"17"	"2020"	"2020"	133298
+"Total"	"Illinois"	"17"			133298
+	"Indiana"	"18"	"2020"	"2020"	78616
+"Total"	"Indiana"	"18"			78616
+	"Iowa"	"19"	"2020"	"2020"	36114
+"Total"	"Iowa"	"19"			36114
+	"Kansas"	"20"	"2020"	"2020"	34376
+"Total"	"Kansas"	"20"			34376
+	"Kentucky"	"21"	"2020"	"2020"	51668
+"Total"	"Kentucky"	"21"			51668
+	"Louisiana"	"22"	"2020"	"2020"	57328
+"Total"	"Louisiana"	"22"			57328
+	"Maine"	"23"	"2020"	"2020"	11539
+"Total"	"Maine"	"23"			11539
+	"Maryland"	"24"	"2020"	"2020"	68554
+"Total"	"Maryland"	"24"			68554
+	"Massachusetts"	"25"	"2020"	"2020"	66428
+"Total"	"Massachusetts"	"25"			66428
+	"Michigan"	"26"	"2020"	"2020"	104074
+"Total"	"Michigan"	"26"			104074
+	"Minnesota"	"27"	"2020"	"2020"	63443
+"Total"	"Minnesota"	"27"			63443
+	"Mississippi"	"28"	"2020"	"2020"	35473
+"Total"	"Mississippi"	"28"			35473
+	"Missouri"	"29"	"2020"	"2020"	69285
+"Total"	"Missouri"	"29"			69285
+	"Montana"	"30"	"2020"	"2020"	10791
+"Total"	"Montana"	"30"			10791
+	"Nebraska"	"31"	"2020"	"2020"	24291
+"Total"	"Nebraska"	"31"			24291
+	"Nevada"	"32"	"2020"	"2020"	33653
+"Total"	"Nevada"	"32"			33653
+	"New Hampshire"	"33"	"2020"	"2020"	11791
+"Total"	"New Hampshire"	"33"			11791
+	"New Jersey"	"34"	"2020"	"2020"	97954
+"Total"	"New Jersey"	"34"			97954
+	"New Mexico"	"35"	"2020"	"2020"	21903
+"Total"	"New Mexico"	"35"			21903
+	"New York"	"36"	"2020"	"2020"	209338
+"Total"	"New York"	"36"			209338
+	"North Carolina"	"37"	"2020"	"2020"	116730
+"Total"	"North Carolina"	"37"			116730
+	"North Dakota"	"38"	"2020"	"2020"	10059
+"Total"	"North Dakota"	"38"			10059
+	"Ohio"	"39"	"2020"	"2020"	129191
+"Total"	"Ohio"	"39"			129191
+	"Oklahoma"	"40"	"2020"	"2020"	47623
+"Total"	"Oklahoma"	"40"			47623
+	"Oregon"	"41"	"2020"	"2020"	39820
+"Total"	"Oregon"	"41"			39820
+	"Pennsylvania"	"42"	"2020"	"2020"	130693
+"Total"	"Pennsylvania"	"42"			130693
+	"Rhode Island"	"44"	"2020"	"2020"	10101
+"Total"	"Rhode Island"	"44"			10101
+	"South Carolina"	"45"	"2020"	"2020"	55704
+"Total"	"South Carolina"	"45"			55704
+	"South Dakota"	"46"	"2020"	"2020"	10960
+"Total"	"South Dakota"	"46"			10960
+	"Tennessee"	"47"	"2020"	"2020"	78689
+"Total"	"Tennessee"	"47"			78689
+	"Texas"	"48"	"2020"	"2020"	368190
+"Total"	"Texas"	"48"			368190
+	"Utah"	"49"	"2020"	"2020"	45702
+"Total"	"Utah"	"49"			45702
+	"Vermont"	"50"	"2020"	"2020"	5133
+"Total"	"Vermont"	"50"			5133
+	"Virginia"	"51"	"2020"	"2020"	94749
+"Total"	"Virginia"	"51"			94749
+	"Washington"	"53"	"2020"	"2020"	83086
+"Total"	"Washington"	"53"			83086
+	"West Virginia"	"54"	"2020"	"2020"	17323
+"Total"	"West Virginia"	"54"			17323
+	"Wisconsin"	"55"	"2020"	"2020"	60594
+"Total"	"Wisconsin"	"55"			60594
+	"Wyoming"	"56"	"2020"	"2020"	6128
+"Total"	"Wyoming"	"56"			6128
+"Total"					3613647
+"---"
+"Dataset: Natality, 2007-2020"
+"Query Parameters:"
+"Year: 2020"
+"Group By: State; Year"
+"Show Totals: True"
+"Show Zero Values: False"
+"Show Suppressed: False"
+"Calculate Rates Per: 1,000"
+"Population Option: No populations shown because rates were not selected."
+"---"
+"Help: See http://wonder.cdc.gov/wonder/help/Natality.html for more information."
+"---"
+"Query Date: Nov 1, 2022 6:55:57 PM"
+"---"
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. National Vital Statistics"
+"System, Natality on CDC WONDER Online Database. Data are from the Natality Records 2007-2020, as compiled from data provided by"
+"the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at"
+"http://wonder.cdc.gov/natality-current.html on Nov 1, 2022 6:55:57 PM"
+"---"
+Caveats:
+"1. Each birth record represents one liveborn infant."

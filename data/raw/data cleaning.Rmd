@@ -1,0 +1,29 @@
+---
+title: "Data cleaning - county-level"
+author: "Yijia Sun"
+date: "2022-10-28"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+df <- read_csv("abortion_data.csv")
+df <- df[, c(2,3,4,13,5,12)]
+
+care <- read.csv("2020/abortion care 2020.csv")
+education <- read.csv("2020/education attainment.csv")
+poverty <- read.csv("2020/percentage of poverty 2019-2020 average.csv")
+colnames(poverty) <- c("state", "percentage of poverty 2019-2020 average")
+head(poverty)
+df <- merge(df, poverty, by = "state", all = TRUE)
+glimpse(df)
+
+df[df == "--"] <- NA
+```
+
+
+
