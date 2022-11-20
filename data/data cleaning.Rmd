@@ -1,0 +1,248 @@
+---
+title: "Data cleaning"
+author: "Yijia Sun"
+date: "2022-11-18"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+# abortion policy index
+```{r}
+policy <- read.csv("raw data/abortion policy index.csv")
+policy <- policy[, c(13,12)]
+colnames(policy) <- c("state", "policy_index")
+write.csv(policy, "cleaned data/abortion policy index.csv")
+```
+
+```{r}
+library(readr)
+Sheet_1 <- read_csv("cleaned data/abortion care_splited/Sheet 1-Number of women of reproductive age per facility.csv", 
+    skip = 1)
+long_s1 <- Sheet_1 %>% gather(year, facility_density, 2:5)
+
+Sheet_2 <- read_csv("cleaned data/abortion care_splited/Sheet 2-Facilities offering only procedural abortion only, n (%).csv", 
+    skip = 1)
+long_s2 <- Sheet_2 %>% gather(year, facilities_only_procedural, 2:5)
+
+Sheet_3 <- read_csv("cleaned data/abortion care_splited/Sheet 3-Facilities offering only medication abortion only, n (%).csv", 
+    skip = 1)
+long_s3 <- Sheet_3 %>% gather(year, facilities_only_medication, 2:5)
+
+Sheet_4 <- read_csv("cleaned data/abortion care_splited/Sheet 4-Facilities offering both procedural abortion and medication abortion, n (%).csv", 
+    skip = 1)
+long_s4 <- Sheet_4 %>% gather(year, facilities_both, 2:5)
+
+Sheet_5 <- read_csv("cleaned data/abortion care_splited/Sheet 5-Gestational limit for medication abortion, mean (range).csv", 
+    skip = 1)
+long_s5 <- Sheet_5 %>% gather(year, gestational_limit_medication, 2:5)
+
+Sheet_6 <- read_csv("cleaned data/abortion care_splited/Sheet 6-Gestational limit for procedural abortion, mean (range).csv", 
+    skip = 1)
+long_s6 <- Sheet_6 %>% gather(year, gestational_limit_procedural, 2:5)
+
+Sheet_7 <- read_csv("cleaned data/abortion care_splited/Sheet 7-Median cost of medication abortion services.csv", 
+    skip = 1)
+long_s7 <- Sheet_7 %>% gather(year, cost_medication, 2:5)
+
+Sheet_8 <- read_csv("cleaned data/abortion care_splited/Sheet 8-Median cost of first trimester procedural abortion services.csv", 
+    skip = 1)
+long_s8 <- Sheet_8 %>% gather(year, cost_first_trimester, 2:5)
+
+Sheet_9 <- read_csv("cleaned data/abortion care_splited/Sheet 9-Median cost of second trimester procedural abortion services.csv", 
+    skip = 1)
+long_s9 <- Sheet_9 %>% gather(year, cost_second_trimester, 2:5)
+
+Sheet_10 <- read_csv("cleaned data/abortion care_splited/Sheet 10-Accepts insurance, n (%†).csv", 
+    skip = 1)
+long_s10 <- Sheet_10 %>% gather(year, accepts_insurance, 2:5)
+
+Sheet_11 <- read_csv("cleaned data/abortion care_splited/Sheet 11-Number of independent clinics, n (%).csv", 
+    skip = 1)
+long_s11 <- Sheet_11 %>% gather(year, independent_clinics, 2:5)
+
+Sheet_12 <- read_csv("cleaned data/abortion care_splited/Sheet 12-Number of Planned Parenthoods, n (%).csv", 
+    skip = 1)
+long_s12 <- Sheet_12 %>% gather(year, planned_parenthoods, 2:5)
+
+#put all data frames into list
+df_list <- list(long_s1, long_s2, long_s3, long_s4, long_s5, long_s6, long_s7, long_s8, long_s9, long_s10, long_s11, long_s12)      
+
+care <- cbind(long_s1, long_s2, long_s3, long_s4, long_s5, long_s6, long_s7, long_s8, long_s9, long_s10, long_s11, long_s12)
+care <- care[, c(1,2,3,6,9,12,15,18,21,24,27,30,33,36)]
+
+view(care)
+write.csv(care, "cleaned data/abortion care_cleaned.csv")
+```
+
+```{r}
+abortion_rate <- data.frame(x1 = numeric(),    # Create empty data frame
+                    x2 = character(),
+                    x3 = numeric(),
+                    stringsAsFactors = FALSE)
+```
+
+```{r}
+abor17 <- read.csv("raw data/abortion rate/abortions rate 2017.csv")
+instate17 <- abor17[1:53, 2:53]
+instate17[instate17 == "-- "] <- NA
+
+instate17[34, 'X.32'] <- 24982 + 52908
+instate17 <- instate17[-c(35),]
+instate_abor17 <- diag(as.matrix((as.data.frame(instate17))))
+
+ab17 <- data.frame(instate17$X)
+ab17$"2017" <- instate_abor17
+ab17 <- ab17[-c(1),]
+
+
+abor18 <- read.csv("raw data/abortion rate/abortions rate 2018.csv")
+instate18 <- abor18[1:53, 2:53]
+instate18[instate18 == "-- "] <- NA
+
+instate18[34, 'X.32'] <- 24495 + 48158
+instate18 <- instate18[-c(35),]
+instate_abor18 <- diag(as.matrix((as.data.frame(instate18))))
+
+ab18 <- data.frame(instate18$X)
+ab18$"2018" <- instate_abor18
+ab18 <- ab18[-c(1),]
+
+
+
+abor19 <- read.csv("raw data/abortion rate/abortions rate 2019.csv")
+instate19 <- abor19[1:53, 2:53]
+instate19[instate19 == "--"] <- NA
+
+instate19[34, 'X.32'] <- 47911 + 26496
+instate19 <- instate19[-c(35),]
+instate_abor19 <- diag(as.matrix((as.data.frame(instate19))))
+
+ab19 <- data.frame(instate19$X)
+ab19$"2019" <- instate_abor19
+ab19 <- ab19[-c(1),]
+
+
+instate_abor <- cbind(ab17,ab18,ab19)
+instate_abor <- instate_abor[, -c(3,5)]
+```
+
+# abortion rate by residence
+```{r}
+percentage_leaving <- instate_abor
+percentage_leaving$state17 <- unname(unlist(abor17[1, 3:53]))
+percentage_leaving$abor_res17 <- unname(unlist(abor17[54, 3:53]))
+percentage_leaving$state18 <- unname(unlist(abor18[1, 3:53]))
+percentage_leaving$abor_res18 <- unname(unlist(abor18[54, 3:53]))
+percentage_leaving$state19 <- unname(unlist(abor19[1, 3:53]))
+percentage_leaving$abor_res19 <- unname(unlist(abor19[54, 3:53]))
+
+percentage_leaving <- percentage_leaving[, -c(5,7,8,10)]
+
+percentage_leaving$`2017`<-gsub(",","",as.character(percentage_leaving$`2017`))
+percentage_leaving$`2018`<-gsub(",","",as.character(percentage_leaving$`2018`))
+percentage_leaving$`2019`<-gsub(",","",as.character(percentage_leaving$`2019`))
+percentage_leaving$abor_res17<-gsub(",","",as.character(percentage_leaving$abor_res17))
+percentage_leaving$abor_res18<-gsub(",","",as.character(percentage_leaving$abor_res18))
+percentage_leaving$abor_res19<-gsub(",","",as.character(percentage_leaving$abor_res19))
+
+percentage_leaving <- percentage_leaving %>% 
+  mutate_at(c('2017', '2018', '2019', 'abor_res17', 'abor_res18', 'abor_res19'), as.numeric)
+
+percentage_leaving$percent_leave17 <- (percentage_leaving$abor_res17 - percentage_leaving$`2017`) / percentage_leaving$abor_res17 * 100
+percentage_leaving$percent_leave18 <- (percentage_leaving$abor_res18 - percentage_leaving$`2018`) / percentage_leaving$abor_res18  * 100
+percentage_leaving$percent_leave19 <- (percentage_leaving$abor_res19 - percentage_leaving$`2019`) / percentage_leaving$abor_res19  * 100
+```
+
+# reproductive age women
+```{r}
+abor_care <- read.csv("raw data/abortion care.csv")
+abor_care <- abor_care[, c(1,2,3,4,7,8,9)]
+colnames(abor_care) <- c("state", "fac17", "fac18", "fac19", "density17", "density18", "density19")
+abor_care <- abor_care[-c(1),]
+
+abor_care <- abor_care[order(abor_care$state),]
+
+abor_care$density17<-gsub(",","",as.character(abor_care$density17))
+abor_care$density18<-gsub(",","",as.character(abor_care$density18))
+abor_care$density19<-gsub(",","",as.character(abor_care$density19))
+
+abor_care <- abor_care %>% 
+  mutate_at(c('fac17', 'fac18', 'fac19', 'density17', 'density18', 'density19'), as.numeric)
+
+abor_care$women17 <- abor_care$fac17 * abor_care$density17
+abor_care$women18 <- abor_care$fac18 * abor_care$density18
+abor_care$women19 <- abor_care$fac19 * abor_care$density19
+
+abor_care <- abor_care[, c(1,8,9,10)]
+abor_care <- cbind(abor_care,percentage_leaving)
+abor_care <- abor_care[, c(1,2,3,4,9,10,11)]
+abor_care$abor_rate17 <- abor_care$abor_res17 / abor_care$women17 * 1000
+abor_care$abor_rate18 <- abor_care$abor_res18 / abor_care$women18 * 1000
+abor_care$abor_rate19 <- abor_care$abor_res19 / abor_care$women19 * 1000
+
+```
+
+# poverty
+
+```{r}
+pov1719 <- read.csv("raw data/poverty 2016-2017, 2018-2019.csv")
+pov18 <- read.csv("raw data/poverty 2017-2018, 2019-2020.csv")
+
+pov1719 <- pov1719[-c(1:10), c(1,4,6)]
+colnames(pov1719) <- c("state", "poverty 2016-2017", "poverty 2018-2019")
+pov1719 <- pov1719[-c(11,22,33,44,56,57,58,59,60),]
+
+pov18 <- pov18[-c(1:10), c(1,4)]
+colnames(pov18) <- c("state", "poverty 2017-2018")
+pov18 <- pov18[-c(11,22,33,44,56,57,58,59,60),]
+
+pov <- cbind(pov1719, pov18)
+
+pov <- pov[, c(1,2,5,3)]
+```
+
+
+# organize into one
+```{r}
+abortion_care <- read.csv("cleaned data/abortion care_cleaned.csv")
+abortion_policy <- read.csv("cleaned data/abortion policy index.csv")
+rate_residence <- read.csv("cleaned data/abortion rate by residence per 1000 reproductive women.csv")
+percent_leaving <- read.csv("cleaned data/percentage of leaving.csv")
+poverty <- read.csv("cleaned data/poverty.csv")
+```
+
+```{r}
+df <- merge(abortion_care, abortion_policy, by.x = "State", by.y = "state", all = TRUE)
+
+rate_residence <- rate_residence[,-c(1)]
+colnames(rate_residence) <- c("State", "2017", "2018", "2019")
+rate_residence <- rate_residence %>% gather(year, abortion_rate_residence, 2:4)
+df <- merge(df, rate_residence, by = c("State", "year"), all = TRUE)
+df <- df[df$year != 2020, ]
+
+percent_leaving <- percent_leaving[,-c(1)]
+colnames(percent_leaving) <- c("State", "2017", "2018", "2019")
+percent_leaving <- percent_leaving %>% gather(year, percentage_leaving, 2:4)
+df <- merge(df, percent_leaving, by = c("State", "year"), all = TRUE)
+
+poverty <- poverty[,-c(1)]
+colnames(poverty) <- c("State", "2017", "2018", "2019")
+poverty <- poverty %>% gather(year, poverty, 2:4)
+df <- merge(df, poverty, by = c("State", "year"), all = TRUE)
+
+write.csv(df, "cleaned data/all.csv")
+```
+
+
+# data preprocessing
+```{r}
+all <- read.csv("cleaned data/all_3.csv")
+all <- all[,-c(1)]
+```
+
+
+

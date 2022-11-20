@@ -1,0 +1,50 @@
+---
+title: "Exploratory Data Analysis"
+author: "Yijia Sun"
+date: "2022-11-17"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(gtrendsR)
+library(usmap)
+library(tidyr)
+library(janitor)
+library(psych)
+library(knitr)
+library(broom)
+library(cowplot) # use plot_grid function
+library(patchwork)
+library(knitr) 
+library(broom) 
+library(rstatix)
+library(stargazer)
+```
+
+# Statement of the research question
+
+Examining the impact of state-level restrictive regulations on abortions in the United States
+
+
+## Modeling objective
+
+We hope to identify the general pattern/relationship of abortion restrictions and outcomes in the United States.
+
+
+
+# Description of the data and response variable
+
+
+
+Exploratory data analysis - univariate, bivariate, multivariate (i.e. visualizing potential interaction terms)
+The EDA should include visualizations (with informative titles and axes labels) and summary statistics as you describe the main results from the visualizations.
+
+
+This analysis should be written as a report. Write your analysis in a .Rmd file called “eda.Rmd” in your project folder on GitHub and output a PDF.
+
+
+

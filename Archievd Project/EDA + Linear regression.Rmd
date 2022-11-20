@@ -1,0 +1,452 @@
+---
+title: "EDA+linear reg"
+author: "Yijia Sun"
+date: "2022-10-28"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(gtrendsR)
+library(usmap)
+library(tidyr)
+library(janitor)
+library(psych)
+library(knitr)
+library(broom)
+library(cowplot) # use plot_grid function
+library(patchwork)
+library(knitr) 
+library(broom) 
+library(rstatix)
+library(stargazer)
+
+library(broom)
+library(pROC)
+library(plotROC) 
+library(performance)
+```
+
+
+```{r}
+df_new <- read_csv("data/abortion_data.csv")
+colnames(df_new)
+```
+
+
+
+# abortion law index usmap
+```{r}
+#USMAP
+#organzing data for state, transfer into abbr
+map1 <- df[c(1,5)]
+map1 <- map1[order(df$state),]
+map1$fips <- statepop$fips
+map1$abbr <- statepop$abbr
+colnames(map1) <- c('state', 'value', 'fips', 'abbr')
+#plot usmap
+plot_usmap(data = map1, values = "value") + ggtitle("abortion law index") + scale_fill_gradient2(
+    high = "#d8b365", 
+    mid = "white",
+    low = "red",
+    midpoint = 0)
+```
+
+
+
+#response variables
+```{r fig.height = 4, fig.width = 5}
+#histogram
+his1 <- ggplot(df_new, aes(x= abortion_rate_occurrence)) + 
+ geom_histogram() + ggtitle("Histogram for rate by state of occurrence")
+
+his2 <- ggplot(df_new, aes(x= abortion_rate_residence)) + 
+ geom_histogram() + ggtitle("Histogram for rate by state of residence")
+
+his3 <- ggplot(df_new, aes(x= Maternal_mortality_rate)) + 
+ geom_histogram() + ggtitle("Maternal mortality rate")
+
+his4 <- ggplot(df_new, aes(x= percentage_of_travel)) + 
+ geom_histogram() + ggtitle("Percentage of travel")
+
+his1 + his2 + his3 + his4
+
+```
+
+```{r}
+stargazer(as.data.frame(df_new[]), type = "text", digits=1, title = "Summary Statistics")
+```
+
+# Mean imputation
+```{r}
+cbind(lapply(lapply(df_new, is.na), sum))
+df_new$Gestational_limit_medication_abortion[is.na(df_new$Gestational_limit_medication_abortion)] <- mean(df_new$Gestational_limit_medication_abortion,na.rm = TRUE)
+
+df_new$cost_medication_abortion[is.na(df_new$cost_medication_abortion)] <- mean(df_new$cost_medication_abortion,na.rm = TRUE)
+
+df_new$cost_second_trimester[is.na(df_new$cost_second_trimester)] <- mean(df_new$cost_second_trimester,na.rm = TRUE)
+
+df_new$policy_index[is.na(df_new$policy_index)] <- mean(df_new$policy_index,na.rm = TRUE)
+
+df_new$fertility_rate[is.na(df_new$fertility_rate)] <- mean(df_new$fertility_rate,na.rm = TRUE)
+```
+
+
+
+#covariats
+```{r fig.height = 3, fig.width = 5}
+#histogram
+co1 <- ggplot(df, aes(x=`Abortion Law Index`)) + 
+ geom_histogram()
+
+co2 <- ggplot(df, aes(x=`Number of women of reproductive age per facility`)) + 
+ geom_histogram()
+
+co3 <- ggplot(df, aes(x=`Mean gestational limit for medication abortion`)) + 
+ geom_histogram() 
+
+co4 <- ggplot(df, aes(x=`Median cost of medication abortion services`)) + 
+ geom_histogram()
+
+co5 <- ggplot(df, aes(x=`Mean gestational limit for procedural abortion`)) + 
+ geom_histogram()
+
+co6 <- ggplot(df, aes(x=`Median cost of first trimester procedural abortion services`)) + 
+ geom_histogram()
+
+co7 <- ggplot(df, aes(x=`Median cost of second trimester procedural abortion services`)) + 
+ geom_histogram()
+
+co8 <- ggplot(df, aes(x=`FERTILITY RATE 2020`)) + 
+ geom_histogram()
+
+co1 + co2 + co3 + co4 + co5 + co6 + co7 + co8
+
+```
+
+
+#response vs covariates
+
+```{r fig.height = 3, fig.width = 5}
+#scatterplot
+sc1 <- ggplot(df, aes(x=`Abortion Law Index`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc2 <- ggplot(df, aes(x=`Number of women of reproductive age per facility`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc3 <- ggplot(df, aes(x=factor(`Mean gestational limit for medication abortion`), y = `rate by state of occurrence`)) + 
+ geom_boxplot()
+
+sc4 <- ggplot(df, aes(x=`Median cost of medication abortion services`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc5 <- ggplot(df, aes(x=factor(`Mean gestational limit for procedural abortion`), y = `rate by state of occurrence`)) + 
+ geom_boxplot()
+
+sc6 <- ggplot(df, aes(x=`Median cost of first trimester procedural abortion services`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc7 <- ggplot(df, aes(x=`Median cost of second trimester procedural abortion services`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc8 <- ggplot(df, aes(x=`FERTILITY RATE 2020`, y = `rate by state of occurrence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc1 + sc2 + sc3 + sc4 + sc5 + sc6 + sc7 + sc8
+
+```
+```{r fig.height = 5, fig.width = 5}
+#scatterplot
+sc1 <- ggplot(df, aes(x=`Abortion Law Index`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc2 <- ggplot(df, aes(x=`Number of women of reproductive age per facility`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc3 <- ggplot(df, aes(x=factor(`Mean gestational limit for medication abortion`), y = `rate by state of residence`)) + 
+ geom_boxplot()
+
+sc4 <- ggplot(df, aes(x=`Median cost of medication abortion services`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc5 <- ggplot(df, aes(x=factor(`Mean gestational limit for procedural abortion`), y = `rate by state of residence`)) + 
+ geom_boxplot()
+
+sc6 <- ggplot(df, aes(x=`Median cost of first trimester procedural abortion services`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc7 <- ggplot(df, aes(x=`Median cost of second trimester procedural abortion services`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc8 <- ggplot(df, aes(x=`FERTILITY RATE 2020`, y = `rate by state of residence`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc1 + sc2 + sc3 + sc4 + sc5 + sc6 + sc7 + sc8
+
+```
+```{r fig.height = 3, fig.width = 5}
+#scatterplot
+sc1 <- ggplot(df, aes(x=`Abortion Law Index`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc2 <- ggplot(df, aes(x=`Number of women of reproductive age per facility`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc3 <- ggplot(df, aes(x=factor(`Mean gestational limit for medication abortion`), y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_boxplot()
+
+sc4 <- ggplot(df, aes(x=`Median cost of medication abortion services`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc5 <- ggplot(df, aes(x=factor(`Mean gestational limit for procedural abortion`), y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_boxplot()
+
+sc6 <- ggplot(df, aes(x=`Median cost of first trimester procedural abortion services`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc7 <- ggplot(df, aes(x=`Median cost of second trimester procedural abortion services`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc8 <- ggplot(df, aes(x=`FERTILITY RATE 2020`, y = `Maternal Mortality Rate per 100,000 birth 2018-2020`)) + 
+ geom_point() + geom_smooth(method='lm')
+
+sc1 + sc2 + sc3 + sc4 + sc5 + sc6 + sc7 + sc8
+
+```
+
+
+#linear reg
+
+# rate by state of occurrence
+```{r}
+linear_reg1 <- lm(abortion_rate_occurrence
+                 ~ Policy_index                                      
+                    + Fertility_rate     
+                    + facility_density      
+                    + change_open_facilities                
+                    + facilities_only_procedural_abortion
+                    + Facilities_only_medication_abortion
+                    + Facilities_both
+                    + Gestational_limit_medication_abortion
+            + Gestational_limit_procedural_abortion
+            + cost_medication_abortion
+            + cost_first_trimester
+            + cost_second_trimester
+            + Accepts_insurance
+            + Number_of_independent_clinics
+            + Number_of_Planned_Parenthoods
+            + Bachelor_Degree
+            + High_School
+            + percentage_of_poverty,
+                 data = df_new) 
+
+step(linear_reg1, k = 2)
+
+
+lm1 <- lm(abortion_rate_occurrence ~ policy_index + fertility_rate + 
+    facility_density + change_open_facilities + Gestational_limit_procedural_abortion + cost_first_trimester + Bachelor_Degree + High_School + percentage_of_poverty, 
+    data = df_new)
+summary(lm1)
+
+tidy(lm1) %>%
+  kable(format = "markdown", digits = 3)
+par(mfrow = c(2, 2))
+plot(lm1)
+
+```
+```{r}
+linear_reg2 <- lm(abortion_rate_residence
+                 ~ Policy_index                                      
+                    + Fertility_rate     
+                    + facility_density      
+                    + change_open_facilities                
+                    + facilities_only_procedural_abortion
+                    + Facilities_only_medication_abortion
+                    + Facilities_both
+                    + Gestational_limit_medication_abortion
+            + Gestational_limit_procedural_abortion
+            + cost_medication_abortion
+            + cost_first_trimester
+            + cost_second_trimester
+            + Accepts_insurance
+            + Number_of_independent_clinics
+            + Number_of_Planned_Parenthoods
+            + Bachelor_Degree
+            + High_School
+            + percentage_of_poverty,
+                 data = df_new) 
+
+step(linear_reg2, k = 2)
+
+
+lm3 <- lm( abortion_rate_residence ~ policy_index + fertility_rate + 
+    Facilities_only_medication_abortion + Facilities_both + cost_medication_abortion + 
+    cost_second_trimester + Bachelor_Degree + High_School, data = df_new)
+
+summary(lm3)
+tidy(lm3) %>%
+  kable(format = "markdown", digits = 3)
+par(mfrow = c(2, 2))
+plot(lm3)
+```
+
+#mortality
+
+```{r}
+df3 <- df_new[rowSums(is.na(df_new))==0, ]
+colnames(df3)
+
+linear_reg3 <- lm(maternal_mortality_rate
+                  ~ policy_index                                      
+                    #+ Fertility_rate     
+                    + facility_density      
+                    + change_open_facilities                
+                    + facilities_only_procedural_abortion
+                    + Facilities_only_medication_abortion
+                    + Facilities_both
+                    + Gestational_limit_medication_abortion
+            + Gestational_limit_procedural_abortion
+            + cost_medication_abortion
+            + cost_first_trimester
+            + cost_second_trimester
+            + Accepts_insurance
+            + Number_of_independent_clinics
+            + Number_of_Planned_Parenthoods
+            + Bachelor_Degree
+            + High_School
+            + percentage_of_poverty,
+                 data = df3) 
+
+step(linear_reg3, k = 2)
+
+
+lm5 <- lm(maternal_mortality_rate ~ policy_index + change_open_facilities + 
+    facilities_only_procedural_abortion + Facilities_only_medication_abortion + 
+    Facilities_both + percentage_of_poverty, data = df3)
+summary(lm5)
+tidy(lm5) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm5)
+
+```
+
+
+
+#residence - occurence
+ positive, more people travel out of state
+ 
+```{r}
+df4 <- df_new
+df4$res_occ <- df4$abortion_rate_residence - df4$abortion_rate_occurrence
+
+df4$travel <- ifelse(df4$res_occ > "0", 1, 0)
+
+df4$travel_index <- ifelse(df4$travel == "1", "travel_out", "not_travel_out")
+
+ggplot(df4, aes(y=Policy_index, x = factor(travel_index), group = factor(travel_index))) + geom_boxplot()
+
+logistic_reg4 <- glm(travel
+                 ~ Policy_index                                      
+                    + Fertility_rate     
+                    + facility_density      
+                    + change_open_facilities                
+                    + facilities_only_procedural_abortion
+                    + Facilities_only_medication_abortion
+                    + Facilities_both
+                    + Gestational_limit_medication_abortion
+            + Gestational_limit_procedural_abortion
+            + cost_medication_abortion
+            + cost_first_trimester
+            + cost_second_trimester
+            + Accepts_insurance
+            + Number_of_independent_clinics
+            + Number_of_Planned_Parenthoods
+            + Bachelor_Degree
+            + High_School
+            + percentage_of_poverty,
+                 data = df4, family = 'binomial') 
+
+step(logistic_reg4, k = 2)
+
+lm6 <- glm(travel ~ policy_index + fertility_rate + facility_density + 
+    change_open_facilities + facilities_only_procedural_abortion + 
+    Facilities_only_medication_abortion + Facilities_both + Gestational_limit_procedural_abortion + 
+    cost_first_trimester + Number_of_independent_clinics + percentage_of_poverty, 
+    family = "binomial", data = df4)
+
+summary(lm6)
+
+tidy(lm6) %>%
+  kable(format = "markdown", digits = 3)
+
+
+
+risk_m_aug <- augment(lm6, type.predict = "response", 
+                      type.residuals = "deviance")
+nbins <- sqrt(nrow(risk_m_aug))
+risk_m_aug %>%
+  arrange(.fitted) %>%
+  slice(1:60) %>%
+  summarise(mean_resid = mean(.resid), #y axis
+            mean_pred = mean(.fitted)) #x axis
+
+library(performance)
+result <- binned_residuals(lm6)
+if (require("see")) {
+  plot(result)
+}
+
+```
+
+
+
+
+# percentage of travel
+```{r}
+
+reg5 <- lm(percentage_of_travel
+                 ~ Policy_index                                      
+                    + Fertility_rate     
+                    + facility_density      
+                    + change_open_facilities                
+                    + facilities_only_procedural_abortion
+                    + Facilities_only_medication_abortion
+                    + Facilities_both
+                    + Gestational_limit_medication_abortion
+            + Gestational_limit_procedural_abortion
+            + cost_medication_abortion
+            + cost_first_trimester
+            + cost_second_trimester
+            + Accepts_insurance
+            + Number_of_independent_clinics
+            + Number_of_Planned_Parenthoods
+            + Bachelor_Degree
+            + High_School
+            + percentage_of_poverty,
+                 data = df_new) 
+
+step(reg5, k = 2)
+
+lm_t <- lm(percentage_of_travel ~ policy_index + facilities_only_procedural_abortion + 
+    Gestational_limit_medication_abortion + Gestational_limit_procedural_abortion + 
+    cost_medication_abortion + cost_first_trimester, data = df_new)
+
+summary(lm_t)
+
+tidy(lm_t) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm_t)
+
+```
+
+
+
+
