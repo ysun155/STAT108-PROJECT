@@ -63,15 +63,16 @@ Our response variables are  `abortion_rate_residence` and `percentage_leaving`.
 
 
 
+# Section 1 - Data Cleaning
 
-# Import Data
+## Import Data
 
 ```{r message = FALSE}
 df <- read_csv("data/abortion_data.csv")
 df <- df[,-c(1)]
 ```
 
-# Categorize state by policy index
+## Categorize state by policy index
 
 We generate a new variable `policy_catog` to categorize states by their policy index. States with scores ranging from -6 to -2 are reported by Guttmacher to be hostile, -1 to +1 are neutral, and +2 to +6 are supportive.
 
@@ -84,7 +85,7 @@ df <- df %>% mutate(policy_catog =
 ```
 
 
-# Data Cleaning
+## Data Cleaning
 
 Since states including California, Maryland, New Hampshire, and Wyoming don't report their data or only reported by occurrence, their abortion rate by state of residence aren't accurate so we remove these states from analysis. We also remove the District of Columbia from analysis, which was not included in the Guttmacher abortion policy report.
 
@@ -95,11 +96,13 @@ df_filtered <- df[is.na(df$percentage_leaving) == FALSE & is.na(df$policy_index)
 
 
 
-# Exploratory data analysis
+# Section 2 - Exploratory data analysis
 
 Before building the model, we first conduct exploratory data analysis.
 
-## Pie Chart for categories of states policy
+## Univariate
+
+### (1) Pie Chart
 
 We create a pie chart and mao for the categorical variable `policy_catog`, in order to see the distribution of policy categories.
 
@@ -139,7 +142,7 @@ plot_usmap(data = map, values = "value") + ggtitle("Abortion policy category") +
 - Most states have hostile abortion policy.
 
 
-## Univariate
+### (2) Histograms
 
 We create histograms to check the distribution of outcome variabels, `abortion_rate_residence` and `percentage_leaving`.
 
@@ -241,10 +244,11 @@ his15 <- ggplot(df_filtered, aes(x=poverty)) +
 
 
 
-# Bivariate
+## Bivariate
 
 Then, we use dotplots to analyze the relationship between all variables with each outcome variables, grouped by the policy category.
 
+### (1) Dotplots for abortion rate
 
 ```{r fig.width= 10, fig.height= 7}
 p1 <- ggplot(data=df_filtered, aes(x=facility_density,y=abortion_rate_residence, color = factor(policy_catog))) +
@@ -304,6 +308,7 @@ guide_area() + (p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12+p13) +
 - `cost_medication` and `cost_fisrt_trimester` both have negative association with abortion rate for all types of states.
 
 
+### (2) Dotplots for percentage of leaving
 
 
 ```{r fig.width= 10, fig.height= 7}
@@ -349,7 +354,7 @@ guide_area() + (d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10 + d11 + d12 + d
 - Hostile states with `gestational_limit_medication` of 9 or 10 tend to have relatively higher percentage of leaving.
 
 
-# multivariate
+## Multivariate
 
 Then, to analyze potential interaction terms or multicollinearity, we use correlation matrix to see the correlation coefficient between all variables.
 
