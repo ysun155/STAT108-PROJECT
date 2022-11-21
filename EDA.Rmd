@@ -120,7 +120,8 @@ df_filtered %>%
     title = "Pie Chart for Abortion Policy Category",
     x = "", 
     y = ""
-  ) 
+  ) +
+  scale_fill_manual(values=c("#fdcdac", "#cbd5e8", "#b3e2cd"))
 
 #USMAP
 #organzing data for state, transfer into abbr
@@ -130,7 +131,7 @@ map <- merge(map, statepop, by.x = "State", by.y = "full", all = TRUE)
 map <- map[, -c(5)]
 colnames(map) <- c('state', 'value', 'fips', 'abbr')
 #plot usmap
-plot_usmap(data = map, values = "value") + ggtitle("Abortion policy category") + scale_color_brewer(palette = "BrBG") + 
+plot_usmap(data = map, values = "value") + ggtitle("Abortion policy category") + scale_fill_manual(values=c("#fdcdac", "#cbd5e8", "#b3e2cd")) + 
    theme(legend.position = "right")
 ```
 
