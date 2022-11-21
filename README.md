@@ -1,4 +1,7 @@
-## Examining the impact of state-level restrictive regulations on abortions in the United States.
+## Research Question
+
+Examining the impact of state-level restrictive regulations on abortions
+in the United States.
 
 ## Introduction
 
@@ -36,42 +39,31 @@ emphasized the importance of providing solid evidence on the impact of
 regulations restricting access to abortion care in light of contemporary
 policy shifts (Arnold, 2022).
 
-At the same time, COVID-19’s introduction into a climate of abortion
-restrictions has increased the difficulties that providers and
-communities already face (Wolfe & van der Meulen Rodgers, 2021). Our
-study sought to assess the difference in abortion access and rate before
-and during COVID-19 and examine the impact of abortion barriers on
-abortion and fertility outcomes. We hypothesize that increased barriers
-to care might result in a decrease in the in-state abortion rate and an
-increase in maternal mortality rate, but potentially an increase in
-traveling across state lines for abortion care.
+Our study sought to examine the impact of abortion barriers on abortion
+rate and cross-state movement to obtain abortion care from 2017 to 2019
+in the United States. We hypothesize that increased barriers to care
+might result in a decrease in the in-state abortion rate, but an
+increase in traveling across states for abortion care.
 
 ## Data Collection
 
-### Abortion rate and maternal mortality rate
+### Abortion rate and cross-state movement to obtain abortion care
 
-The main source for abortion data is the Alan Guttmacher Institute
-(AGI), which is a leading research and policy nonprofit organization
-committed to advancing sexual and reproductive health starting in 1968.
-We collected abortion rate by state of occurrence, abortion rate by
-state of residence, and percentage of travelling out of states for
-abortion in 2020. AGI collects information by conducting a periodic
-survey of abortion providers, Abortion Provider Census, for each state
-beginning in 1973. With the number of abortions performed in each state
-(abortions by state of occurrence) as estimated from the survey, they
-reassigned abortions to patients’ states of residency using information
-collected by state abortion reporting agencies.
+We rely on data from CDC’s annual Abortion Surveillance report for our
+analysis of abortion rate and interstate travel for abortion care. CDC
+is the national public health federal agency of the United States.
+Starting from 1969, they compile information from reporting areas to
+produce national estimates of legal induced abortions. They report the
+number of abortion incidence by state of residence and state of clinical
+service. Additionally, four states (California, Maryland, New Hampshire,
+and Wyoming) either did not report to the CDC, or did not conform to
+reporting requirements, therefore are not included in the analysis.
 
-Maternal mortality rate is collected from Centers for Disease Control
-and Prevention (CDC), based from the National Vital Statistics System.
-This dataset includes maternal mortality rate per 100,000 live births
-from 2018 to 2020. Maternal deaths is defined to be deaths of women
-while pregnant or within 42 days of termination of pregnancy,
-irrespective of the duration and the site of the pregnancy, from any
-cause related to or aggravated by the pregnancy or its management, but
-not from accidental or incidental causes.
+We use the total number of abortion by state of residence to calculate
+abortion rate, and the number of abortion where states of residence and
+clinical services are the same to calculate percentage of leaving.
 
-### Abortion policy and care data
+### Abortion policy and abortion care
 
 The source for state abortion policy is AGI, which was collected from
 the American Community Survey. States were scored based on whether they
@@ -90,42 +82,37 @@ the number of women of reproductive age per facility, gestational limit,
 and median cost of abortion services from 2017 to 2021. Data is offered
 by publicly advertising abortion facilities across the United States.
 
-Other risk factors, including education attainment and poverty, are
-collected from FRED Economic Data and United States Census Bureau
-respectively. The data about percentage of poverty of 2-year average
-(2019-2020) is based from Current Population Survey and 1960 to 2021
-Annual Social and Economic Supplements (CPS ASEC). Education attainment
-data including percentage of High School Graduate or Higher and
-Bachelor’s Degree of Higher in 2020 is based from the American Community
-Survey.
+Other risk factors, including percentage of poverty, are collected from
+United States Census Bureau. The data includes the percentage of poverty
+of 2-year average, which is based from Current Population Survey and
+1960 to 2021 Annual Social and Economic Supplements (CPS ASEC). For each
+year, we use the 2-year percentage of poverty from last year and the
+corresponding year. For instance, the percentage of poverty in 2019 is
+the average percentage of poverty in 2018 - 2019.
 
     glimpse(read.csv("data/abortion_data.csv"))
 
-    ## Rows: 51
-    ## Columns: 23
-    ## $ state                                 <chr> "Alabama", "Alaska", "Arizona", …
-    ## $ abortion_rate_occurrence              <dbl> 6.0, 8.6, 9.3, 5.6, 19.2, 11.2, …
-    ## $ abortion_rate_residence               <dbl> 9.5, 9.2, 9.7, 7.8, 19.0, 9.9, 1…
-    ## $ percentage_of_travel                  <int> 47, 7, 6, 37, 0, 1, 6, 44, 45, 1…
-    ## $ maternal_mortality_rate               <dbl> 36.202111, 27.232188, 28.264675,…
-    ## $ policy_index                          <int> -5, 2, -6, -6, 6, 0, 3, -1, NA, …
-    ## $ fertility_rate                        <dbl> 60.6, 65.7, 54.0, 60.7, 52.4, 51…
-    ## $ facility_density                      <int> 368957, 32300, 201690, 335159, 5…
-    ## $ change_open_facilities                <int> 0, -1, 0, -1, 4, 3, -6, 0, -1, -…
-    ## $ facilities_only_procedural_abortion   <int> 33, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0…
-    ## $ Facilities_only_medication_abortion   <int> 0, 20, 13, 50, 54, 44, 50, 0, 0,…
-    ## $ Facilities_both                       <int> 67, 80, 88, 50, 44, 52, 50, 100,…
-    ## $ Gestational_limit_medication_abortion <int> 10, 11, 10, 11, 10, 11, 11, 11, …
-    ## $ Gestational_limit_procedural_abortion <int> 21, 14, 17, 21, 18, 20, 17, 16, …
-    ## $ cost_medication_abortion              <int> 525, 800, 605, 722, 680, 458, 65…
-    ## $ cost_first_trimester                  <int> 500, 800, 620, 625, 700, 540, 76…
-    ## $ cost_second_trimester                 <int> NA, 900, 1510, NA, 1170, 1500, 8…
-    ## $ Accepts_insurance                     <int> 0, 80, 63, 0, 93, 74, 100, 100, …
-    ## $ Number_of_independent_clinics         <int> 100, 20, 50, 50, 39, 48, 17, 0, …
-    ## $ Number_of_Planned_Parenthoods         <int> 0, 80, 50, 50, 61, 52, 83, 100, …
-    ## $ Bachelor_Degree                       <dbl> 27.8, 31.9, 33.0, 24.9, 36.9, 44…
-    ## $ High_School                           <dbl> 88.0, 93.7, 89.1, 88.2, 84.4, 92…
-    ## $ percentage_of_poverty                 <dbl> 13.9, 11.8, 10.4, 14.1, 10.6, 9.…
+    ## Rows: 153
+    ## Columns: 19
+    ## $ X                            <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13…
+    ## $ State                        <chr> "Alabama", "Alabama", "Alabama", "Alaska"…
+    ## $ year                         <int> 2017, 2018, 2019, 2017, 2018, 2019, 2017,…
+    ## $ policy_index                 <int> -5, -5, -5, 2, 2, 2, -6, -6, -6, -6, -6, …
+    ## $ abortion_rate_residence      <dbl> 6.65491545, 7.15497635, 7.12910538, 8.484…
+    ## $ percentage_leaving           <dbl> 29.2372307, 31.1932392, 37.0295273, 11.32…
+    ## $ facility_density             <int> 221821, 221608, 368957, 27404, 27138, 269…
+    ## $ facilities_only_procedural   <int> 20, 20, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,…
+    ## $ facilities_only_medication   <int> 0, 0, 0, 17, 17, 17, 13, 13, 13, 67, 67, …
+    ## $ facilities_both              <int> 80, 80, 67, 83, 83, 83, 88, 88, 88, 33, 3…
+    ## $ gestational_limit_medication <int> 9, 9, 9, 10, 10, 10, 10, 10, 10, 9, 9, 9,…
+    ## $ gestational_limit_procedural <int> 14, 14, 21, 14, 14, 14, 17, 17, 17, 21, 2…
+    ## $ cost_medication              <int> NA, 525, 575, 800, 650, 800, NA, 460, 590…
+    ## $ cost_first_trimester         <int> NA, 500, 500, 835, 650, 800, NA, 480, 620…
+    ## $ cost_second_trimester        <int> NA, 650, NA, NA, 750, NA, NA, 1703, NA, N…
+    ## $ accepts_insurance            <int> 40, 40, 33, 100, 100, 83, 38, 38, 63, 67,…
+    ## $ independent_clinics          <int> 60, 60, 100, 33, 33, 33, 50, 50, 50, 33, …
+    ## $ planned_parenthoods          <int> 40, 40, 0, 67, 67, 67, 50, 50, 50, 67, 67…
+    ## $ poverty                      <dbl> 16.1, 15.6, 14.4, 11.8, 12.6, 11.7, 15.2,…
 
 ## References
 
@@ -159,11 +146,6 @@ Smith, E., Ortiz, J., Thanhauser, L., Gray, A., Akpaka, N., Chowdhry,
 N., Jorawar, S., & Pelka, A. (2022, August 25). *Abortion laws by
 State.* Center for Reproductive Rights.
 <https://reproductiverights.org/maps/abortion-laws-by-state/>
-
-Wolfe, T., & van der Meulen Rodgers, Y. (2021, March 22). *Abortion
-during the COVID-19 pandemic: Racial disparities and barriers to care in
-the USA - Sexuality Research and Social Policy.* SpringerLink.
-<https://link.springer.com/article/10.1007/s13178-021-00569-8>
 
 Wolfe, T., & van der Meulen Rodgers, Y. (2021, March 22). *Abortion
 during the COVID-19 pandemic: Racial disparities and barriers to care in

@@ -5,7 +5,9 @@ date: "2022-10-22"
 output: md_document
 ---
 
-## Examining the impact of state-level restrictive regulations on abortions in the United States.
+## Research Question
+
+Examining the impact of state-level restrictive regulations on abortions in the United States.
 
 ## Introduction
 
@@ -15,24 +17,24 @@ Before this, even though abortion was made legal, most states have implemented r
 
 Even while laws are widespread, few studies assessed the impact of such regulations on abortions and fertility. For instance, Ellertson (1997) found a decrease in the in-state abortion rate and delay in abortions when parental involvement laws took effect, which implies the increased odds of traveling out of state for abortions. Also, Addante et al. (2021) concluded that states with more restrictive abortions have higher maternal mortality than states with moderate or protective abortions from 1995 to 2017. Most articles evaluate policy effects from 2006 or earlier, possibly prior to the more recent surge in regulation enactment (Austin & Harper, 2018). Such scarcity of research is particularly noteworthy after the overturn of Roe v. Wade, which emphasized the importance of providing solid evidence on the impact of regulations restricting access to abortion care in light of contemporary policy shifts (Arnold, 2022).
 
-At the same time, COVID-19's introduction into a climate of abortion restrictions has increased the difficulties that providers and communities already face (Wolfe & van der Meulen Rodgers, 2021). Our study sought to assess the difference in abortion access and rate before and during COVID-19 and examine the impact of abortion barriers on abortion and fertility outcomes. We hypothesize that increased barriers to care might result in a decrease in the in-state abortion rate and an increase in maternal mortality rate, but potentially an increase in traveling across state lines for abortion care.
+Our study sought to examine the impact of abortion barriers on abortion rate and cross-state movement to obtain abortion care from 2017 to 2019 in the United States. We hypothesize that increased barriers to care might result in a decrease in the in-state abortion rate, but an increase in traveling across states for abortion care.
 
 ## Data Collection
 
-### Abortion rate and maternal mortality rate
+### Abortion rate and cross-state movement to obtain abortion care
 
-The main source for abortion data is the Alan Guttmacher Institute (AGI), which is a leading research and policy nonprofit organization  committed to advancing sexual and reproductive health starting in 1968. We collected abortion rate by state of occurrence, abortion rate by state of residence, and percentage of travelling out of states for abortion in 2020. AGI collects information by conducting a periodic survey of abortion providers, Abortion Provider Census, for each state beginning in 1973. With the number of abortions performed in each state (abortions by state of occurrence) as estimated from the survey, they reassigned abortions to patients' states of residency using information collected by state abortion reporting agencies.
+We rely on data from CDC's annual Abortion Surveillance report for our analysis of abortion rate and interstate travel for abortion care. CDC is the national public health federal agency of the United States. Starting from 1969, they compile information from reporting areas to produce national estimates of legal induced abortions. They report the number of abortion incidence by state of residence and state of clinical service. Additionally, four states (California, Maryland, New Hampshire, and Wyoming) either did not report to the CDC, or did not conform to reporting requirements, therefore are not included in the analysis.
 
-Maternal mortality rate is collected from Centers for Disease Control and Prevention (CDC), based from the National Vital Statistics System. This dataset includes maternal mortality rate per 100,000 live births from 2018 to 2020. Maternal deaths is defined to be deaths of women while pregnant or within 42 days of termination of pregnancy, irrespective of the duration and the site of the pregnancy, from any cause related to or aggravated by the pregnancy or its management, but not from accidental or incidental causes.
+We use the total number of abortion by state of residence to calculate abortion rate, and the number of abortion where states of residence and clinical services are the same to calculate percentage of leaving.
 
 
-### Abortion policy and care data
+### Abortion policy and abortion care
 
 The source for state abortion policy is AGI, which was collected from the American Community Survey. States were scored based on whether they had policies in effect in any of six categories of abortion restrictions and any of six categories of measures that protect or expand abortion rights and access. Each state was given a score of 1 for every protective measure in effect and a score of -1 for every abortion restriction in effect. A state with a score of either positive or negative six has either all of the abortion restrictions or all of the protective measures in effect.
 
 The dataset for abortion care is collected from the Abortion Facility Database Project, Advancing New Standards in Reproductive Health (ANSIRH), at University of California San Francisco. It mainly provides the number of women of reproductive age per facility, gestational limit, and median cost of abortion services from 2017 to 2021. Data is offered by publicly advertising abortion facilities across the United States.
 
-Other risk factors, including education attainment and poverty, are collected from FRED Economic Data and United States Census Bureau respectively. The data about percentage of poverty of 2-year average (2019-2020) is based from Current Population Survey and 1960 to 2021 Annual Social and Economic Supplements (CPS ASEC). Education attainment data including percentage of High School Graduate or Higher and Bachelor's Degree of Higher in 2020 is based from the American Community Survey.
+Other risk factors, including percentage of poverty, are collected from United States Census Bureau. The data includes the percentage of poverty of 2-year average, which is based from Current Population Survey and 1960 to 2021 Annual Social and Economic Supplements (CPS ASEC). For each year, we use the 2-year percentage of poverty from last year and the corresponding year. For instance, the percentage of poverty in 2019 is the average percentage of poverty in 2018 - 2019.
 
 
 ```{R include = FALSE}
@@ -55,7 +57,5 @@ Centers for Disease Control and Prevention, National Center for Health Statistic
 Ellertson, C. (1997, August). *Mandatory parental involvement in minors' abortions: Effects of the laws in Minnesota, Missouri, and Indiana.* American journal of public health. <https://pubmed.ncbi.nlm.nih.gov/9279279/>
 
 Smith, E., Ortiz, J., Thanhauser, L., Gray, A., Akpaka, N., Chowdhry, N., Jorawar, S., & Pelka, A. (2022, August 25). *Abortion laws by State.* Center for Reproductive Rights. <https://reproductiverights.org/maps/abortion-laws-by-state/>
-
-Wolfe, T., & van der Meulen Rodgers, Y. (2021, March 22). *Abortion during the COVID-19 pandemic: Racial disparities and barriers to care in the USA - Sexuality Research and Social Policy.* SpringerLink. <https://link.springer.com/article/10.1007/s13178-021-00569-8>
 
 Wolfe, T., & van der Meulen Rodgers, Y. (2021, March 22). *Abortion during the COVID-19 pandemic: Racial disparities and barriers to care in the USA - Sexuality Research and Social Policy.* SpringerLink. <https://link.springer.com/article/10.1007/s13178-021-00569-8>
