@@ -244,5 +244,14 @@ all <- read.csv("cleaned data/all_3.csv")
 all <- all[,-c(1)]
 ```
 
+# change facility density into correct 1/facility density
+
+```{r}
+df <- read.csv("abortion_data.csv")
+
+df$facility_density <- 1 / df$facility_density * 100000
+
+write.csv(df, "new_abortion_data.csv")
+```
 
 
