@@ -102,9 +102,9 @@ Before building the model, we first conduct exploratory data analysis.
 
 ## Univariate
 
-### (1) Pie Chart
+### (1) Pie Chart and Map for categories of state policy
 
-We create a pie chart and mao for the categorical variable `policy_catog`, in order to see the distribution of policy categories.
+We create a pie chart and map for the categorical variable `policy_catog`, in order to see the distribution of policy categories.
 
 ```{r}
 #pie chart
@@ -138,25 +138,25 @@ plot_usmap(data = map, values = "value") + ggtitle("Abortion policy category") +
 
 **From pie chart and map above, we find:**
 
-- `cost_second_trimester` have a large amont of missing value.
-
 - Most states have hostile abortion policy.
 
+- Supportive states mostly are in the northeast and west parts.
 
-### (2) Histograms
 
-We create histograms to check the distribution of outcome variabels, `abortion_rate_residence` and `percentage_leaving`.
+### (2) Histograms for outcome variables
+
+We create histograms to check the distribution of outcome variables, `abortion_rate_residence` and `percentage_leaving`.
 
 ```{r fig.height= 3, fig.width= 10}
 
 his1 <- ggplot(df_filtered, aes(x = abortion_rate_residence)) +
-  geom_histogram(aes(y=..density..), colour="black", fill="white") +
+  geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 0.5) +
   geom_density(alpha=.2, fill="#FF6666") +
   #facet_grid(year ~ ., scales = "free") + 
   xlab("abortion rate by state of residence") + ggtitle("Histogram for Abortion rate by State of Residence")
 
 his2 <- ggplot(df_filtered, aes(x = percentage_leaving)) +
-  geom_histogram(aes(y=..density..), colour="black", fill="white") +
+  geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 3) +
   geom_density(alpha=.2, fill="#FF6666") +
   #facet_grid(year ~ ., scales = "free") + 
   xlab("percentage of leaving") + ggtitle("Histogram for Percentage of Leaving")
@@ -171,68 +171,15 @@ his1 + his2
 - Distribution for percentage of leaving is strongly right-skewed.
 
 
+### (3) Histograms for covariates
 
 Then, for all other variables, we create histograms to check their distributions.
 
-
-```{r fig.width= 10, fig.height= 7}
-
-his3 <- ggplot(df_filtered, aes(x=facility_density)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-  #+ xlab("facility density")
-
-his4 <- ggplot(df_filtered, aes(x=facilities_only_procedural)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-  #+ xlab("percentage of facilities with only procedural abortion")
-
-his5 <- ggplot(df_filtered, aes(x=facilities_only_medication)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of facilities with only medication abortion")
-
-his6 <- ggplot(df_filtered, aes(x=facilities_both)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of facilities with both")
-
-his7 <- ggplot(df_filtered, aes(x=gestational_limit_medication)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("mean gestational limit of medication abortion")
-
-his8 <- ggplot(df_filtered, aes(x=gestational_limit_procedural)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("mean gestational limit of procedural abortion")
-
-his9 <- ggplot(df_filtered, aes(x=cost_medication)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("mean cost of medication abortion")
-
-his10 <- ggplot(df_filtered, aes(x=cost_first_trimester)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("mean cost of abortion at first trimester")
-
-his11 <- ggplot(df_filtered, aes(x=cost_second_trimester)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("mean cost of abortion at second trimester")
-
-his12 <- ggplot(df_filtered, aes(x=accepts_insurance)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of clinic accepting insurance")
-
-his13 <- ggplot(df_filtered, aes(x=independent_clinics)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of independent clinics")
-
-his14 <- ggplot(df_filtered, aes(x=planned_parenthoods)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of planned parenthoods")
-
-his15 <- ggplot(df_filtered, aes(x=poverty)) + 
-  geom_histogram(color="darkblue", fill="lightblue")
-#+ xlab("percentage of poverty")
-
-
-(his3 + his4 + his5 + his6 + his7 + his8 + his9 + his10 + his11 + his12 + his13 + his14 + his15) + plot_annotation(title = 'Histograms for explanatory variables')
-
+```{r}
+cov <- df_filtered[,-c(1,2,4,5,19)]
+multi.hist(cov, global = FALSE, )
 ```
+
 
 **From the histograms above, we find:**
 
@@ -251,7 +198,9 @@ Then, we use dotplots to analyze the relationship between all variables with eac
 
 ### (1) Dotplots for abortion rate
 
-```{r fig.width= 10, fig.height= 7}
+*(Code is too long so gets hidden.)*
+
+```{r fig.width= 10, fig.height= 7, echo = FALSE}
 p1 <- ggplot(data=df_filtered, aes(x=facility_density,y=abortion_rate_residence, color = factor(policy_catog))) +
   geom_point(alpha=0.8)  + ylab(" ")
 
@@ -311,8 +260,10 @@ guide_area() + (p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12+p13) +
 
 ### (2) Dotplots for percentage of leaving
 
+*(Code is too long so get hidden.)*
 
-```{r fig.width= 10, fig.height= 7}
+
+```{r fig.width= 10, fig.height= 7, echo = FALSE}
 d1 <- ggplot(data=df_filtered, aes(x=facility_density,y=percentage_leaving, color = factor(policy_catog))) + geom_point(alpha=0.8)  + ylab(" ")
 
 d2 <- ggplot(data=df_filtered,aes(x=facilities_only_procedural,y=percentage_leaving, color = factor(policy_catog))) + geom_point(alpha=0.8)  + ylab(" ")
