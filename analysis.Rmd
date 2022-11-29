@@ -191,7 +191,7 @@ In the residual plots, no outlier and no obvious pattern are found and variance 
 
 ### Interpretations and findings from the model coefficients
 
-In our model, we found significant positive correlation (p-value < 0.05) between abortion rate and policy index. Specifically, we found a 0.582 unit increase in abortion rate for every one unit increase in policy index (assume other variables don't change), that is, a more supportive abortion policy is correlated with an increase in residence abortion rate.
+In our model, we found significant positive correlation (p-value < 0.05) between abortion rate and policy index. Specifically, we found a 0.582 unit increase in abortion rate for every one unit increase in policy index, assuming other variables don't change.
 
 Also, we found significant positive correlation (p-value < 0.05) of abortion rate with percentage of facilities with only procedural abortion, only medication abortion, or both. One unit increase in percentage of facilities with only procedural, medication, or both is correlated with approximately 2 unit increase in abortion rate (assume other variables don't change). 
 
@@ -199,6 +199,13 @@ Moreover, cost of medication abortion is negatively correlated (estimate: -0.011
 
 In this model, we include the interaction between policy index and facility density. We found that each additional one unit of facility density decrease the effectiveness of policy index on abortion rate by 0.306 unit. This implies that with more facility density, abortion policy tends to have less correlation with abortion rate.
 
+### Discussion
+
+Our results imply that people are more likely to perform abortions in states with more permissive and accommodating abortion laws. In states where abortion is more strictly regulated, the lower abortion rate may be the result of external constraints that prevent individuals from obtaining an abortion, or it may be because residents of these states prefer not to undergo abortions.
+
+In addition, increasing the number of abortion facilities will increase the number of individuals who have access to abortions and hence the abortion rate. Also, with additional facilities, the impact of restrictive abortion legislation on abortion rates would be minimized. In contrast, higher costs for medication abortion might discourage patients from obtaining abortions, hence lowering abortion rates.
+
+One of the most alarming findings is that when the poverty rate is higher, also increases the abortion rate. This may be due to the fact that low-income families are more likely to choose abortion because they cannot afford the expense of childrearing or contraception.
 
 
 
@@ -260,13 +267,23 @@ In the residual plots, no obvious pattern is found and variance is constant. In 
 
 ### Interpretations and findings from the model coefficients
 
-In our model, we found significant negative correlation (p-value < 0.05) between percentage of leaving and policy index. Specifically, we found a 15.7 percent decrease in percentage of leaving for every one unit increase in policy index (assume other variables don't change), that is, a more supportive abortion policy is correlated with an decrease in percentage of leaving.
+In our model, we found significant negative correlation (p-value < 0.05) between percentage of leaving and policy index. Specifically, we found a 15.7 percent decrease in percentage of leaving for every one unit increase in policy index, assuming other variables don't change.
 
 We found significant negative correlation (p-value < 0.05) between percentage of leaving and facility density. With one unit increase in facility density, there are 42.1 percent decrease in percentage of leaving, assuming other variables don't change. Also, we found negative correlation (p-value < 0.05) between percentage of leaving and gestational limit for procedural abortion. With one year increase in gestational limit for procedural abortion, there are 7.3 percent decrease in percentage of leaving.
 
 Moreover, percentage of facilities accepting insurance is positively correlated (estimate: 0.006, p-value < 0.05) with percentage of leaving. This means that increase in percentage of facilities accepting insurance is correlated with increase in percentage of leaving. Also, percentage of poverty is positively correlated with percentage of leaving, that is, increase in percentage of poverty is correlated with percentage of leaving.
 
 In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods. We found that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by 0.03 percent.
+
+### Discussion
+
+These results suggest that individuals in states with stricter abortion regulations are more likely to leave their home state to have an abortion, which is particularly concerning. This not only raises the expense to individuals, but also drastically decreases the ease of everyday living. This also implies that rules governing abortion are cumbersome and destructive to the daily lives of individuals.
+
+In addition, when there are more abortion facilities and the gestational limit is greater, persons are more likely to have abortions in their home state and are hence less likely to leave. Moreover, similar to the findings in abortion rate, residents in states with a higher poverty rate are more likely to leave for abortion, confirming our earlier hypothesis that abortion regulations impose a greater financial burden on low-income families.
+
+However, one of our results that goes against to common sense is that having more facilities that accept insurance leads more individuals to leave the state to have an abortion. This result contradicts the purpose of insurance itself. This will need further investigation before we can provide a reasonable explanation.
+
+
 
 
 
