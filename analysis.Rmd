@@ -1,0 +1,342 @@
+---
+title: "STAT108 Project Update 4 - Analysis"
+author: "Yijia Sun"
+date: "2022-11-28"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(gtrendsR)
+library(usmap)
+library(tidyr)
+library(janitor)
+library(psych)
+library(knitr)
+library(broom)
+library(cowplot) # use plot_grid function
+library(patchwork)
+library(knitr) 
+library(broom) 
+library(rstatix)
+library(stargazer)
+library(naniar)
+library(openintro)
+library(corrplot)
+```
+
+# Research Question
+We want to examine the associations of state-level abortion restrictions on abortions rate and cross-state movement to obtain abortion care in the United States, 2017 - 2019.
+
+# Import Data
+
+```{r}
+df <- read_csv("data/mod_abortion_data.csv")
+df <- df[, -c(1)]
+```
+
+# Missing Value Evaluation
+
+Before data analysis, we first conduct missing value evaluation. 
+
+The plot below provides a visualization of the amount of missing data, showing in black the location of missing values. The percentage of missing values for each variable is shown. It indicates that `cost_medication` and `cost_first_trimester` have 17.39% missing value, and `cost_second_trimester` has 59.42% missing value. Therefore `cost_second_trimester` has the most missing values.
+
+```{r}
+vis_miss(df)
+```
+
+
+## Exploring patterns of missingness
+
+After identifying missing value, we have to check for the patterns to determine which way of missing imputation is needed.
+
+We used an upset plot from the `UpSetR` package to visualize the intersections of missingness. The plot below shows that in most (58) cases, only `cost_second_trimester` has missing value. But there are 24 cases where `cost_medication`, `cost_first_trimester`, and `cost_second_trimester` have missing values together.
+
+```{r}
+gg_miss_upset(df)
+```
+
+
+Therefore, since the missing rate of `cost_second_trimester` (59.42%) is too large to analyze, we'll not include this variable for the rest of our analysis.
+
+```{r}
+df_drop <- df[, -14]
+```
+
+
+For the missingness of `cost_medication` and `cost_first_trimester`, we explore more patterns related to its abortion policy `policy_index`. Since missingness of these two variables are together in all cases, we only visualize `cost_medication` here.
+
+From the plots below, we find that in most states, missingness only occurs for one year. For Vermont, Utah, South Dakota, and Delaware, missingness occurs for two years. Also, missingness occurs more often in states with policy index 3, -5, and -6.
+
+```{r}
+ggplot(df_drop,
+       aes(x = cost_medication,
+           y = State)) +
+ geom_miss_point() + ggtitle("Patterns of missingness for each state")
+
+ggplot(df_drop,
+       aes(x = cost_medication,
+           y = policy_index)) +
+ geom_miss_point() + ggtitle("Patterns of missingness for each policy index") + xlab("policy index")
+```
+From the observations we found, there's no obvious pattern between missingness and abortion policy. Therefore we think it's reasonable to impute missing values with the mean for the corresponding state. For instance, in Alabama, `cost_medication` for 2017 is missing, but for 2018 and 2019 is 525 and 575 respectively. We'll impute the `cost_medication` for 2017 with the mean of 2018 and 2019 in Alabama, 550.
+
+## Missing Value Imputation
+
+```{r}
+df_impute <- df_drop %>% 
+  group_by(State) %>%
+  mutate(cost_medication = ifelse(is.na(cost_medication), mean(cost_medication,na.rm=TRUE), cost_medication)) %>%
+  mutate(cost_first_trimester = ifelse(is.na(cost_first_trimester), mean(cost_first_trimester,na.rm=TRUE), cost_first_trimester))
+
+head(df_impute)
+```
+
+
+# Summary of EDA
+
+From last project update, we conducted univariate, bivariate, and multivariate data analysis, without missing value imputation. Therefore, we include a summary and updated version of EDA here.
+
+First, we examined the distribution of outcome variables. The histograms below indicate that both distribution is right-skewed.
+
+```{r}
+his1 <- ggplot(df_impute, aes(x = abortion_rate_residence)) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white") +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("abortion rate by state of residence") + ggtitle("Distribution for Abortion rate")
+
+his2 <- ggplot(df_impute, aes(x = percentage_leaving)) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white") +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("percentage of leaving") + ggtitle("Distribution for Percentage of Leaving")
+
+his1 + his2
+```
+
+Then, we check the relationship between each outcome variables and the main covariates of interest `policy_index`. Dotplots below indicate the linear relationship between each outcome variables and policy index.
+
+```{r}
+dot1 <- ggplot(df_impute, aes(x = policy_index, y = abortion_rate_residence)) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("abortion rate by state of residence") + 
+  ggtitle("Abortion Rate vs. Policy Index") +
+  geom_smooth(method ="lm")
+
+dot2 <- ggplot(df_impute, aes(x = policy_index, y = percentage_leaving)) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("percentage of leaving") + 
+  ggtitle("Percentage of Leaving vs. Policy Index") + 
+  geom_smooth(method ="lm")
+
+dot1 + dot2
+```
+
+
+Then, we use correlation plots to check the level of interaction between the variables. Based on the correlation matrix below, we find four pairs of variables to be significantly correlated: `policy_index` & `facility_density`, `facilities_only_medication` & `facilities_both`, `independent_clinics` & `planned_parenthoods`, and `cost_medication` & `cost_first_trimester`.
+
+```{r}
+correlation <- df_impute[, -c(1,18)]
+corr <- round(cor(correlation,use="pairwise.complete.obs"), 1)
+corrplot(corr, tl.col = "brown", bg = "White", tl.srt=30, tl.cex =0.7,type = "upper")
+```
+
+
+# Building the Model
+
+We will use multiple linear regression model to generate inference to the general association between abortion policy and outcome in the United States. Based on the dotplots, we can identify some linear relationship between abortion rate/percentage of leaving and policy index. Therefore, we start building out model with multiple linear regression.
+
+For each regression model, we will first conduct model selection with AIC by removing the insignificant variables and adding new interaction terms.
+
+
+## Multiple Linear Regression for Abortion Rate
+
+```{r}
+# exclude State, policy_catog, percentage_leaving
+df1 <- df_impute[, -c(1, 5, 18)]
+
+linear_reg <- lm(abortion_rate_residence
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df1) 
+
+lm <- step(linear_reg, k = 2, trace=0)
+
+# summary(lm)
+tidy(lm) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm)
+```
+
+### Discussion of the assumptions for the model
+
+In the residual plots, no outliers and no obvious pattern is found and variance of residuals are constant. In the Normal Q-Q plot, we find that residuals from our model forms a nice normal distribution. Therefore, based on these residuals, we can conclude that our model meets the assumption.
+
+### Interpretations and findings from the model coefficients
+
+In our model, we found significant positive correlation (p-value < 0.05) between abortion rate and policy index. Specifically, we found a 0.582 unit increase in abortion rate for every one unit increase in policy index (assume other variables don't change), that is, a more supportive abortion policy is correlated with an increase in residence abortion rate.
+
+Also, we found significant positive correlation (p-value < 0.05) of abortion rate with percentage of facilities with only procedural abortion, only medication abortion, and both. One unit increase in percentage of facilities with only procedural, medication, or both is correlated with approximately 2 unit increase in abortion rate (assume other variables don't change). 
+
+Moreover, cost of medication abortion is negatively correlated (estimate: -0.011, p-value < 0.05) with abortion rate. This means that increase in cost of medication abortion is correlated with decrease in abortion rate. Percentage of poverty is positively correlated with abortion rate, that is, increase in percentage of poverty is correlated with increase in abortion rate.
+
+In this model, we include the interaction between policy index and facility density. We found that each additional one unit of facility density decrease the effectiveness of policy index on abortion rate by 0.306 unit. This implies that with more facility density, abortion policy tends to have less correlation with abortion rate.
+
+
+
+
+## Multiple Linear Regression for Percentage of Leaving
+
+From the previous EDA, we identify the strongly skewed distribution in percentage of leaving, which might influence our model accuracy. Therefore, we adapt log transformation on percentage of leaving.
+
+## Log Transformation on Percentage of Leaving
+
+Through the histogram and dotplots below, we find that after log transformation, the distribution becomes more normal.
+
+```{r}
+log1 <- ggplot(df_impute, aes(x = log1p(percentage_leaving))) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white") +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("percentage of leaving") + ggtitle("Distribution for Log-transformed Percentage of Leaving")
+
+log2 <- ggplot(df_impute, aes(x = policy_index, y = log1p(percentage_leaving))) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("percentage of leaving") + 
+  ggtitle("Log-transformed Percentage of Leaving vs. Policy Index") + 
+  geom_smooth(method ="lm")
+
+log1+log2
+```
+
+## Log-transformed Multiple Linear Regression
+
+```{r}
+
+# exclude State, policy_catog, abortion_rate_residence
+df2 <- df_impute[, -c(1, 4, 18)]
+
+linear_reg2_log <- lm(log1p(percentage_leaving)
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2) 
+
+lm2_log <- step(linear_reg2_log, k = 2, trace = 0)
+
+#summary(lm2_log)
+tidy(lm2_log) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm2_log)
+```
+
+
+
+### Discussion of the assumptions for the model
+
+In the residual plots, no onvious pattern is found and variance is constant. In the Normal Q-Q plot, we found that residuals from our model forms a nice normal distribution. Therefore, we can conclude that our model meet the assumption. However, one outlier with high leverage is found.
+
+### Interpretations and findings from the model coefficients
+
+In our model, we found significant negative correlation (p-value < 0.05) between percentage of leaving and policy index. Specifically, we found a 15.7 percent decrease in percentage of leaving for every one unit increase in policy index (assume other variables don't change), that is, a more supportive abortion policy is correlated with an decrease in percentage of leaving.
+
+We found significant negative correlation (p-value < 0.05) between percentage of leaving and facility density. With one unit increase in facility density, there are 42.1 percent decrease in percentage of leaving, assuming other variables don't change. Also, we found negative correlation (p-value < 0.05) between percentage of leaving and gestational limit for procedural abortion. With one year increase in gestational limit for procedural abortion, there are 7.3 percent decrease in percentage of leaving.
+
+Moreover, percentage of facilities accepting insurance is positively correlated (estimate: 0.006, p-value < 0.05) with percentage of leaving. This means that increase in percentage of facilities accepting insurance is correlated with increase in percentage of leaving. Also, percentage of poverty is positively correlated with percentage of leaving, that is, increase in percentage of poverty is correlated with percentage of leaving.
+
+In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods. We found that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by 0.03 percent.
+
+
+
+# Additional work
+
+## Multiple Linear Regression for Percentage of Leaving without Log Transformation
+
+Before log transformation on percentage of leaving, I tried with raw data. However, this model didn't meet the assumption.
+
+
+```{r}
+linear_reg2 <- lm(percentage_leaving
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2) 
+
+lm2 <- step(linear_reg2, k = 2, trace = 0)
+
+#summary(lm2)
+tidy(lm2) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm2)
+```
+
+### Discussion of the assumptions for the model
+
+In the residual plots, no outliers but specific pattern is found. Fitted values less than 20 tend to have a decreasing trend in residuals. In the Normal Q-Q plot, we found that residuals from our model forms a nice normal distribution. Therefore, based on these residuals, we can conclude that our model doesn't meet the assumption of homoscedasticity and we might need to transform data.
+
+
+
+## Multiple Linear Regression with abortion policy category
+
+I tried regression model with only policy category, however, 
+
+```{r}
+df1_cat <- df_impute[, -c(1, 3, 5)]
+linear_reg_cat <- lm(abortion_rate_residence
+                 ~ .
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df1_cat) 
+
+lm_cat <- step(linear_reg_cat, k = 2, trace = 0)
+
+# summary(lm_cat)
+tidy(lm_cat) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm_cat)
+```
+
+```{r}
+df2_cat <- df_impute[, -c(1, 3, 4)]
+linear_reg2_log_cat <- lm(log1p(percentage_leaving)
+                 ~ .
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2_cat) 
+
+lm2_log_cat <- step(linear_reg2_log_cat, k = 2, trace = 0)
+
+#summary(lm2_log_cat)
+tidy(lm2_log_cat) %>%
+  kable(format = "markdown", digits = 3)
+
+par(mfrow = c(2, 2))
+plot(lm2_log_cat)
+```
+
