@@ -1,0 +1,649 @@
+---
+title: "State-level Abortion Restrictions and Its Association with Abortions Rate
+  and Cross-state Movement in the United States, 2017 - 2019"
+author: "Yijia Sun"
+output:
+  pdf_document:
+    toc: yes
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r include = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(gtrendsR)
+library(usmap)
+library(tidyr)
+library(janitor)
+library(psych)
+library(knitr)
+library(broom)
+library(cowplot) # use plot_grid function
+library(patchwork)
+library(knitr) 
+library(broom) 
+library(rstatix)
+library(stargazer)
+library(naniar)
+library(openintro)
+library(corrplot)
+library(lessR)
+library(corrplot)
+library(RColorBrewer)
+library(grid)
+library(jtools)
+library(car)
+library(gtsummary)
+```
+
+
+\newpage
+
+# Introduction
+
+
+## Background
+
+After the U.S. Supreme Court decides to overrule Roe v. Wade (1973)
+which guaranteed a constitutional right to abortion services, abortion
+and reproductive rights will be dependent on each state’s judgment
+starting June 2022 and it is expected that half of the states in the
+United States will outlaw abortions (Smith et al., 2022).
+
+Before this, even though abortion was made legal, most states have
+implemented regulations promoting abortion scarcity and leading to
+barriers to care in recent decades (Wolfe & van der Meulen Rodgers,
+2021). For instance, Texas’ House Bill 2 and Louisiana law required all
+abortion providers to maintain admitting privileges at a nearby hospital
+(Arnold, 2022). It was crucial to highlight the more restrictive forms of
+laws commonly known as “Targeted Regulation of Abortion Providers”
+(TRAP) Laws that put stringent and unnecessary requirements on abortion
+providers (Austin & Harper, 2018). In 2017, 89% of counties in the
+United States had no abortion providers within their borders. People
+were forced to travel more than 100 miles to receive abortion services
+as of 2018 in 27 cities (Smith et al., 2022).
+
+Even while laws were widespread, few studies assessed the impact of such
+regulations on abortions and fertility. For instance, Ellertson (1997)
+found a decrease in the in-state abortion rate and delay in abortions
+when parental involvement laws took effect, which implied the increased
+odds of traveling out of state for abortions. Also, Addante et
+al.(2021) concluded that states with more restrictive abortions have
+higher maternal mortality than states with moderate or protective
+abortions from 1995 to 2017. Most articles evaluated policy effects from
+2006 or earlier, possibly prior to the more recent surge in regulation
+enactment (Austin & Harper, 2018). Such scarcity of research was
+particularly noteworthy after the overturn of Roe v. Wade, which
+emphasized the importance of providing solid evidence on the impact of
+regulations restricting access to abortion care in light of contemporary
+policy shifts (Arnold, 2022).
+
+Our study seek to examine the impact of abortion barriers on abortion
+rate and cross-state movement to obtain abortion care from 2017 to 2019
+in the United States. Our modeling objective is to infer the overall association between abortion restrictions and outcomes in the United States. We hypothesize that more restrictive abortion policy might result in a decrease in the in-state abortion rate, but an increase in traveling across states for abortion care. 
+
+## Data Collection
+
+### Outcome variables: Abortion rate and cross-state movement to obtain abortion care
+
+We rely on data from CDC’s annual Abortion Surveillance report for our
+analysis of abortion rate and interstate travel for abortion care. CDC
+is the national public health federal agency of the United States.
+Starting in 1969, they compile information from reporting areas to
+produce national estimates of legal induced abortions. They report the
+number of abortion incidence by state of residence and state of clinical
+service. Additionally, four states (California, Maryland, New Hampshire,
+and Wyoming) either do not report to the CDC, or do not conform to
+reporting requirements, therefore are not included in the analysis.
+
+We use the total number of abortions by state of residence to calculate
+abortion rate, and the number of abortions where states of residence and
+clinical services are the same to calculate percentage of leaving.
+
+### Abortion policy and abortion care
+
+The source for state abortion policy is Alan Guttmacher Institute (AGI), which is collected from
+the American Community Survey. States are scored based on whether they
+have policies in effect in any of six categories of abortion restrictions
+and any of six categories of measures that protect or expand abortion
+rights and access. Each state is given a score of 1 for every
+protective measure in effect and a score of -1 for every abortion
+restriction in effect. A state with a score of either +6 or
+-6 has either all of the abortion restrictions or all of the
+protective measures in effect.
+
+The dataset for abortion care is collected from the Abortion Facility
+Database Project, Advancing New Standards in Reproductive Health
+(ANSIRH), at University of California San Francisco. It mainly provides
+the number of women of reproductive age per facility, gestational limit,
+and median cost of abortion services from 2017 to 2021. Data is offered
+by publicly advertising abortion facilities across the United States.
+
+The other risk factors, percentage of poverty, is collected from
+United States Census Bureau. The data includes the percentage of poverty
+on a 2-year average, which is based on Current Population Survey and
+1960 to 2021 Annual Social and Economic Supplements (CPS ASEC). For each
+year, we use the 2-year percentage of poverty from last year and the
+corresponding year. For instance, the percentage of poverty in 2019 is
+the average percentage of poverty in 2018 - 2019.
+
+We have the following variables in the dataset:
+
+- `State` - 50 states in the United States and the District of Columbia
+- `year` - 2017, 2018, 2019
+- `policy_index` - Score of each states based on whether they had policies in effect in six categories of abortion restrictions and six categories of measures that protect or expand abortion rights and access (6 is most supportive, -6 is most restrictive)
+- `abortion_rate_residence` - Number of abortions per 1,000 women aged 15 - 44, by state of residence
+- `percentage_leaving` - Percentage of residents obtaining abortions who traveled out of state for care
+- `facility_density` - The number of abortion-providing facility per 100,000 women of reproductive age 15 - 49
+- `facilities_only_procedural` - Percentage of facilities offering only procedural abortion
+- `facilities_only_medication` - Percentage of facilities offering only medication abortion
+- `Facilities_both` - Percentage of facilities offering both procedural and medication abortion
+- `gestational_limit_medication` - Mean gestational limit for medication abortion
+- `gestational_limit_procedural` - Mean gestational limit for procedural abortion
+- `cost_medication` - The median self-pay costs for abortion services, in U.S. dollars
+- `cost_first_trimester` - The median self-pay costs for first trimester procedural abortion services, in U.S. dollars
+- `cost_second_trimester` - The median self-pay costs for second trimester procedural abortion services, in U.S. dollars
+- `accepts_insurance` - Percentage of abortion facilities accepting insurance
+- `independent_clinics` - Percentage of independent clinics
+- `planned_parenthoods` - Percentage of Planned Parenthoods
+- `poverty` - Average percentage of people in poverty, 2019 - 2020
+
+Our main response variables are  `abortion_rate_residence` and `percentage_leaving`.
+
+
+
+# Exploratory data analysis
+
+```{r include = FALSE}
+df <- read_csv("data/mod_abortion_data.csv")
+df <- df[, -c(1)]
+```
+
+## Data Preprocessing
+
+To better visualize abortion policy, we generate a new variable `policy_catog` to categorize states by their policy index. States with scores ranging from -6 to -2 are reported by Guttmacher to be hostile, -1 to +1 are neutral, and +2 to +6 are supportive.
+
+Since states including California, Maryland, New Hampshire, and Wyoming don't report their data or only reported by occurrence, their abortion rate by state of residence aren't accurate so we remove these states from analysis. We also remove the District of Columbia from analysis, which is not included in the Guttmacher abortion policy report.
+
+
+### Missing Value Evaluation
+
+Before data analysis, we first conduct missing value evaluation. 
+
+Figure 1 provides a visualization of the amount of missing data, showing in black the location of missing values. The percentage of missing values for each variable is shown. It indicates that `cost_medication` and `cost_first_trimester` have 17.39% missing value, and `cost_second_trimester` has 59.42% missing value. Therefore `cost_second_trimester` has the most missing values.
+
+\vspace{12pt}
+
+
+```{r fig.height= 6, fig.width= 8, fig.cap= "Missing Value Visualization"}
+vis_miss(df) + 
+  theme(axis.text.x = element_text(angle = 75), 
+        plot.caption = element_text(hjust = 0),
+        plot.title = element_text(face="bold"))
+```
+
+
+After identifying missing value, we check for the patterns to determine which method of missing imputation is needed. We use an Upset Plot from the `UpSetR` package to visualize the intersections of missingness. Figure 2 shows that in most cases, only `cost_second_trimester` has missing value. But there are 24 cases where `cost_medication`, `cost_first_trimester`, and `cost_second_trimester` have missing values together.
+
+
+```{r fig.cap="Upset Plot for Visualizing Missingness Patterns"}
+gg_miss_upset(df)
+```
+
+
+Therefore, since the missing rate of `cost_second_trimester` (59.42%) is too large to be imputed, we'll not include this variable for the rest of our analysis. For the missingness of `cost_medication` and `cost_first_trimester`, we explore more patterns related to its abortion policy, `policy_index`. (Since missingness of these two variables are together in all cases, we only visualize `cost_medication`.)
+
+From Figure 3(a), we find that in most states, missingness only occurs for one year. For Vermont, Utah, South Dakota, and Delaware, missingness occurs for two years. Also, missingness occurs more often in states with policy index 3, -5, and -6. From Figure 3(b), there's no obvious pattern between missingness and abortion policy. 
+
+Therefore we impute missing values with the mean value for the corresponding state. For instance, in Alabama, `cost_medication` for 2017 is missing, but for 2018 and 2019 is 525 and 575 respectively. We'll impute the `cost_medication` for 2017 with the mean of 2018 and 2019 in Alabama, 550.
+
+```{r}
+df_drop <- df[, -14]
+```
+
+
+
+```{r fig.height= 10, fig.width= 8, fig.cap= "Patterns of Missingness by States / Policy Index"}
+miss1 <- ggplot(df_drop,
+       aes(x = cost_medication,
+           y = State)) +
+ geom_miss_point() +
+ggtitle("a. Patterns of Missingness for Each State")
+
+miss2 <- ggplot(df_drop,
+       aes(x = cost_medication,
+           y = policy_index)) +
+ geom_miss_point() + 
+ggtitle("b. Patterns of Missingness for Each Policy Index")
+
+miss1 / miss2
+```
+
+
+
+
+```{r}
+df_impute <- df_drop %>% 
+  group_by(State) %>%
+  mutate(cost_medication = ifelse(is.na(cost_medication), mean(cost_medication,na.rm=TRUE), cost_medication)) %>%
+  mutate(cost_first_trimester = ifelse(is.na(cost_first_trimester), mean(cost_first_trimester,na.rm=TRUE), cost_first_trimester))
+
+```
+
+## Exploratory data analysis
+
+In this section, we conduct summary statistics to describe the characteristics for each variable. We then create pie chart and US map for the categorical variable `policy_catog`, in order to see the spatial distribution of policy categories. To analyze the distribution of outcome variables and their relationship with main variable of interest `policy_index`, we create histograms and scatterplots for each outcome variables. Moreover, we use correlation plots to check the level of interaction between the variables. 
+
+- From Table 1, after data cleaning, only states with `policy_index` from -6 to 4 are included. We find that the distribution of `percentage_leaving` is more spread out with high standard deviation. Also, `cost_medication` and `cost_first_trimester` have large ranges.
+
+- From Figure 4, we find that most states have hostile abortion policy and only a small portion of states have neutral abortion policy, and supportive states mostly are in the northeast and west parts.
+
+- Figure 5 indicates that the distributions for both outcome variables are right-skewed. There are few outliers identified in percentage of leaving, with values over 70%.
+
+- Figure 6 indicates the linear relationship between each outcome variables and policy index. Specifically, with higher abortion policy index, there are generally higher abortion rate and lower percentage of leaving.
+
+- From Figure 7, for the outcome variables, only `cost_medication` shows relatively strong negative correlation with `abortion_rate_residence`. Also, four pairs of variables are found to be significantly correlated. Among these four, `policy_index` & `facility_density` and `cost_medication` & `cost_first_trimester` have strong positive correlations; `facilities_only_medication` & `facilities_both` and `independent_clinics` & `planned_parenthoods` have strong negative correlations.
+
+```{r results='asis'}
+stargazer(as.data.frame(df_impute[, 3:17]), type = "latex", digits=1, title = "Summary Statistics after Missing Value Imputation", header=FALSE)
+```
+
+
+```{r fig.width= 10, fig.height= 5, fig.cap = "Distributions of Abortion Policy Category"}
+#pie chart
+policy1 <- df_impute %>% 
+  ggplot(aes(x = "", fill = policy_catog)) + 
+  geom_bar(position = "fill", width = 1) + 
+  coord_polar(theta = "y") + 
+  labs(x = "", 
+    y = ""
+  ) +
+  scale_fill_manual(values=c("#fdcdac", "#cbd5e8", "#b3e2cd"))
+
+#USMAP
+#organzing data for state, transfer into abbr
+map <- df_impute[,c(1,18)]
+map <- map[order(df_impute$State),]
+map <- merge(map, statepop, by.x = "State", by.y = "full", all = TRUE)
+map <- map[, -c(5)]
+colnames(map) <- c('state', 'value', 'fips', 'abbr')
+#plot usmap
+policy2 <- plot_usmap(data = map, values = "value") + scale_fill_manual(values=c("#fdcdac", "#cbd5e8", "#b3e2cd")) + 
+  theme(legend.position = "right")
+
+policy1 + policy2
+```
+
+
+```{r fig.width= 8, fig.height= 4, fig.cap = "Distributions for Outcome Variables"}
+his1 <- ggplot(df_impute, aes(x = abortion_rate_residence)) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 0.4) +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("abortion rate by state of residence")
+
+his2 <- ggplot(df_impute, aes(x = percentage_leaving)) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 3) +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("percentage of leaving")
+
+his1 + his2
+```
+
+
+```{r fig.width= 8, fig.height= 4, fig.cap="Scatterplots between Outcome Variables and Policy Index"}
+dot1 <- ggplot(df_impute, aes(x = policy_index, y = abortion_rate_residence)) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("abortion rate by state of residence") + 
+  ggtitle("Abortion Rate vs. Policy Index") +
+  geom_smooth(formula = y ~ x, method ="lm")
+
+dot2 <- ggplot(df_impute, aes(x = policy_index, y = percentage_leaving)) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("percentage of leaving") + 
+  ggtitle("Percentage of Leaving vs. Policy Index") + 
+  geom_smooth(formula = y ~ x, method ="lm")
+
+dot1 + dot2
+```
+
+```{r fig.cap = "Correlation Matrix"}
+correlation <- df_impute[, -c(1,18)]
+corr <- round(cor(correlation,use="pairwise.complete.obs"), 1)
+corrplot(corr, tl.col = "brown", bg = "White", tl.srt=30, tl.cex =0.7,type = "upper")
+```
+
+
+# Regression Analysis
+
+Multiple linear regression (MLR) is used to estimate the relationship between two or more independent variables and one outcome variable. The formula for MLR is
+
+\[y = \beta_0 + \beta_1 X_1 + ... + \beta_n X_n + \epsilon  \hspace{10mm} \epsilon \sim N(0,\sigma^2)\]
+
+where $y$ is the predicted value of outcome variable, $\beta_0$ is the intercept (value of $y$ when other variables are 0), $\beta_n$ is the regression coefficient corresponding to its independent variable $X_n$, and $\epsilon$ is the model error.
+
+The model is only reliable based on these assumptions:
+
+- Linearity: Response variable has a linear relationship with the predictor variables.
+
+- Constant variance: The regression variance is the same for all set of independent variables.
+
+- Normality: For a given set of independent variables, the response follows a normal distribution around its mean.
+
+- Independence: All observations are independent.
+
+
+Based on Figure 6, we can identify the linear relationship between outcome variables (abortion rate / percentage of leaving) and our main independent variable of interest, policy index. Since our observations are independent states or observations with different years, we consider our data meets the assumption for independence in an acceptable level. 
+
+Therefore, we use MLR to examine the association between outcome variables (abortion rate / percentage of leaving) and policy index with other risk factors in the United States. One MLR is used for each outcome variables separately. For each regression model, we conduct model selection with Akaike information criterion (AIC) by removing variables without evidence of significance and adding new interaction terms. Also, Variance inflation factor (VIF) is checked for multicollinearity with the selected variables. After building the model, assumptions and evaluation metrices (R-squared, Adjusted R-squared, AIC, BIC) are assessed for model accuracy. Regression coefficient with p-value less than 0.05 is considered to be significant.
+
+
+## Multiple Linear Regression for Abortion Rate
+
+For abortion rate, after model selection, we constructed regression with following formula:
+$$\text{abortion rate} = -792.27006 + 0.39883 X_1 + 0.63096 X_2 + 0.75553 X_3 + 0.08267 X_4 - 0.01261 X_5 + 0.16797 X_6\\$$
+$$- 0.33830 X_2 X_3 + \epsilon  \hspace{10mm} \epsilon \sim N(0,2.205^2)$$
+where $X_1$ is `year`, $X_2$ is `policy_index`, $X_3$ is `facility_density`, $X_4$ is `gestational_limit_procedural`, $X_5$ is `cost_medication`, and $X_6$ is `poverty`.
+
+
+```{r}
+# exclude State, policy_catog, percentage_leaving
+df1 <- df_impute[, -c(1, 5, 18)]
+
+linear_reg <- lm(abortion_rate_residence
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df1) 
+
+
+lm <- lm(formula = abortion_rate_residence ~ year + policy_index + 
+    facility_density + gestational_limit_procedural + cost_medication + 
+    poverty + policy_index:facility_density, data = df1)
+
+#library(glmtoolbox)
+#calculate the VIF for each predictor variable in the model
+#vif1 <- gvif(lm)
+#kable(vif1, caption = "This is the table caption")
+
+#summ(lm, digits = 5)
+#summary(lm)
+tidy(lm) %>%
+  kable(format = "markdown", digits = 5, caption = "Regression Results for Abortion Rate")
+
+
+glance(lm) %>%
+  dplyr::select(r.squared, adj.r.squared, AIC, BIC) %>%
+  kable(format = "markdown", digits = 5, caption = "Regression Model Accuracy Metrics")
+```
+
+
+```{r fig.cap= "Residual Plots of Regression Model for Abortion Rate"}
+par(mfrow = c(2, 2))
+plot(lm)
+```
+
+### Discussion of the assumptions and model performance
+
+From Figure 8, a few outliers and no obvious pattern of residuals are found and variance of residuals is constant. In the Normal Q-Q plot, we find that residuals from our model form a nice normal distribution. Therefore, based on these residuals, we can conclude that our model generally meets the assumption. From Table 3, this model yields an R-squared of 0.48615 and an adjusted R-squared of 0.45848. Specifically, it indicates that 48.615% of the variation in the abortion rate are explained by the independent variables.
+
+
+
+### Interpretations and findings from the model coefficients
+
+In Table 2, we find positive correlation (estimate = 0.63096, p-value = 0.00000) between abortion rate and policy index. Specifically, we find a 0.63096 unit increase in abortion rate for every one unit increase in policy index, holding all other variables constant.
+
+Also, cost of medication abortion is negatively correlated (estimate: -0.01261, p-value = 0.00000) with abortion rate. This means that increase in cost of medication abortion is correlated with decrease in abortion rate. Moreover, percentage of poverty is positively correlated with abortion rate (estimate: 0.16797, p-value = 0.03097), that is, increase in percentage of poverty is correlated with increase in abortion rate.
+
+In this model, we include the interaction between policy index and facility density (estimate = -0.33830, p-value = 0.00087). We find that each additional one unit of facility density decrease the effectiveness of policy index on abortion rate by 0.33830 unit, holding all other variables constant. This implies that with more facility density, abortion policy tends to have less correlation with abortion rate.
+
+
+
+## Multiple Linear Regression for Percentage of Leaving
+
+### Log-transformation
+
+From Figure 5, we identify the strongly skewed distribution in percentage of leaving, which might influence our model accuracy. Therefore, we use log transformation on percentage of leaving. Since the outcome variable contains a large amount of 0s, we add the smallest possible number 0.0000001 to each data before taking the log transformation.
+
+By transforming outcome variable into $log(0.0000001 + x)$, we use histogram and scatterplot to check its distribution. From Figure 9, we find that after log transformation, the distribution becomes more normal. Also, it still shows that there are negative linear relationship between abortion policy index and percentage of leaving.
+
+
+
+```{r fig.width= 10, fig.height= 3, fig.cap = "Histogram and Scatterplot for Log-transformed Percentage of Leaving"}
+log1 <- ggplot(df_impute, aes(x = log(0.0000001 + percentage_leaving))) +
+  geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 0.1) +
+  geom_density(alpha=.2, fill="#FF6666") +
+  #facet_grid(policy_catog ~ ., scales = "free") + 
+  xlab("Log-transformed percentage of leaving") + ggtitle("a. Distribution for Log-transformed Percentage of Leaving")
+
+log2 <- ggplot(df_impute, aes(x = policy_index, y = log(0.0000001 + percentage_leaving))) +
+  geom_point() +
+  xlab("abortion policy index") +
+  ylab("Log-transformed percentage of leaving") + 
+  ggtitle("b. Log-transformed Percentage of Leaving vs. Policy Index") + 
+  geom_smooth(formula = y ~ x,method ="lm")
+
+log1+log2
+```
+
+### Regression Model
+
+For percentage of leaving, after model selection, we constructed regression with following formula:
+$$log(0.0000001 + \text{percentage of leaving}) = 20.26750 - 0.18268 X_1 - 0.53778 X_2 - 0.09338 X_3 + 0.00699 X_4 \\$$
+$$- 0.17980 X_5 - 0.16889 X_6 + 0.08578 X_7 + 0.08619 X_1 X_2 - 0.00041 X_5 X_6 + \epsilon  \hspace{10mm} \epsilon \sim N(0,0.913^2)$$
+where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `gestational_limit_procedural`, $X_4$ is `accpets_insurance`, $X_5$ is `independent_clinics`, $X_6$ is `planned_parenthoods`, and $X_7$ is `poverty`.
+
+
+```{r warning = FALSE}
+# exclude State, policy_catog, abortion_rate_residence
+df2 <- df_impute[, -c(1, 4, 18)]
+
+linear_reg2_log <- lm(log(0.0000001 + percentage_leaving)
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2) 
+
+#lm2_log <- step(linear_reg2_log, k = 2, trace = 0)
+
+lm2_log <- lm(formula = log(0.0000001 + percentage_leaving) ~ policy_index + 
+    facility_density + gestational_limit_procedural + accepts_insurance + 
+    independent_clinics + planned_parenthoods + poverty + policy_index:facility_density + 
+    independent_clinics:planned_parenthoods, data = df2)
+
+#summ(lm2_log, digits = 5)
+
+#summary(lm2_log)
+tidy(lm2_log) %>%
+  kable(format = "markdown", digits = 5, caption = "Regression Results for Percentage of Leaving")
+
+glance(lm2_log) %>%
+  dplyr::select(r.squared, adj.r.squared, AIC, BIC) %>%
+  kable(format = "markdown", digits = 5, caption = "Regression Model Accuracy Metrics")
+```
+
+```{r fig.cap= "Residual Plots of Regression Model for Percentage of Leaving"}
+par(mfrow = c(2, 2))
+plot(lm2_log)
+```
+
+
+### Discussion of the assumptions and model performance
+
+From Figure 10, no obvious pattern is found and variance is constant in the residuals. In the Normal Q-Q plot, we find that residuals from our model forms a nice normal distribution. Therefore, we can conclude that our model meet the assumption. However, one outlier with high leverage is observed. From Table 5, this model yields an R-squared of 0.55486 and an adjusted R-squared of 0.52356. Specifically, it indicates that 55.486% of the variation in the percentage of leaving are explained by the independent variables.
+
+### Interpretations and findings from the model coefficients
+
+From Table 4, we find negative correlation (estimate = -0.18268, p-value = 0.00003) between percentage of leaving and policy index. Specifically, we find a 18.268 percent decrease in percentage of leaving for every one unit increase in policy index, holding all other variables constant.
+
+We find significant negative correlation (estimate = -0.53778, p-value = 0.00192) between percentage of leaving and facility density. Also, we find negative correlation (estimate = -0.09338, p-value = 0.00194) between percentage of leaving and gestational limit for procedural abortion. Moreover, percentage of poverty is positively correlated with percentage of leaving (estimate = 0.08578, p-value = 0.01814), that is, increase in percentage of poverty is correlated with increase in percentage of leaving.
+
+In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods (estimate = -0.00041, p-value = 0.00005). We find that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by 0.041 percent.
+
+
+
+# Discussion
+
+A rising amount of data demonstrates that stringent state laws may be an obstacle for persons seeking an abortion. This study contributes to the existing literature by presenting data from a linear regression analysis indicating that a more restricted state legislative climate is associated with a lower abortion rate. This implies that people are less likely to perform abortion in states with stricter abortion policy. Possible explanation may be the external constraints that prevent individuals from obtaining an abortion, or it may be due to personal willingness. In our study, we find that higher cost for medication abortion and less access to abortion facilities can be the contributing factor.
+
+However, our results also suggest that individuals in states with stricter abortion regulations are more likely to leave their state to have an abortion. Abortion patients may leave their state for care for a variety of reasons, including state restrictions related to gestational limits, waiting periods, and parental notification requirements, as well as if an out-of-state clinic is more conveniently located or has other desirable characteristics (Smith, 2022). Our finding suggests that gestational limit for procedural abortion and less access to abortion facilities may be two of the factors related to patients leaving their state for abortion.
+
+In our study, one of the most alarming findings is that higher poverty rate is associated with higher abortion rate. This is similar to findings in previous studies that substantial disparities in abortion rates in the US, with low-income women having higher abortion rates than affluent women. Possible explanation might be the differences in effective use of contraception influencing disparities in unintended pregnancy; lack of sexual initiation among adolescents live; and differences in access to, quality of, and acceptability of family planning (Dehlendorf et al., 2013).
+
+
+# Limitations
+
+Our study have several limitations. First, since our dataset is collected for continuous three years, this causes that we didn't completely meet one of the assumptions for MLR, independence. Second, we assign each state with only abortion policy index for 2017, due to lack of information about abortion policy for 2018 and 2019. However, it's unlikely for states to have substantial change in abortion policy within one or two years, and we've confirmed that abortion policy index for 2017 is same as for 2020.
+
+# Conclusion
+
+This study provides evidence that a highly restrictive state legislative climate is associated with a lower abortion rate and high percentage of cross-state movement for abortion. The methodology used also suggests that high cost for medication abortion, less access to abortion facilities, low gestational limit for procedural abortion, and high percent of poverty are confounding factors that may drive the abortion rate and cross-state movement. We conclude that restrictive policies may pose a barrier to patients accessing abortion care.
+
+
+# Additional work
+
+## Multiple Linear Regression for Percentage of Leaving without Log Transformation
+
+Before log transformation on percentage of leaving, we tried with raw data. We constructed regression with following formula:
+$$\text{percentage of leaving} = 62.5843773 -0.1891498  X_1 -0.5582952 X_2 -0.4930066 X_3 -0.5003502 X_4 -0.5031974 X_5\\$$
+$$-0.0993845 X_6 +  0.0078566 X_7 -0.1003949 X_8 -0.0901593 X_9 + 0.0918488 X_{10} + 0.0870717  X_1 X_2\\$$
+$$-0.0003862 X_8 X_9 + \epsilon \hspace{10mm} \epsilon \sim N(0,0.9-87^2)$$
+where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `facilities_only_procedural`, $X_4$ is `facilities_only_medication`, $X_5$ is `facilities_both`, $X_6$ is `gestational_limit_procedural`, $X_7$  is `accepts_insurance`, $X_8$ is `independent_clinics`, $X_9$ is `planned_parenthoods`, $X_{10}$ is `poverty`.
+
+From Figure 11, specific pattern is found. Fitted values less than 20 tend to have a decreasing trend in residuals. Therefore, based on these residuals, we can conclude that our model doesn't meet the assumption of homoscedasticity and we might need to transform data.
+
+
+```{r fig.cap = "Residual Plots of Regression for Percentage of Leaving before Log-transformation"}
+linear_reg2 <- lm(percentage_leaving
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2) 
+
+lm2 <- step(linear_reg2, k = 2, trace = 0)
+
+#summary(lm2)
+#tidy(lm2) %>%
+  #kable(format = "markdown", digits = 3, caption = "Regression Results for Percentage of Leaving before Log-transformation")
+
+par(mfrow = c(2, 2))
+plot(lm2)
+```
+
+
+
+## Multiple Linear Regression with too high VIF
+
+Multicollinearity in regression analysis occurs when two or more predictor variables are highly correlated to each other. If the degree of correlation is high enough between variables, it can cause problems when fitting and interpreting the regression model. We consider VIF between 1 and 5 with moderate correlation, and greater than 5 with potentially severe correlation. After model selection, we compute VIFs for each variables to check for multicollinearity. Since our models contain interactive terms, we use generalized variance-inflation factors (GVIF) which is the VIF corrected by the number of degrees of freedom of the predictor variable.
+
+For abortion rate, we constructed regression with following formula:
+$$\text{abortion rate} = -1125.67056 + 0.45728 X_1 + 0.58166 X_2 + 0.79613 X_3 + 2.16631 X_4 - 2.13503 X_5 + 2.14228 X_6\\$$
+$$- 0.09483 X_7 - 0.01110 X_8 + 0.15478 X_9 - 0.30625 X_2 X_3 + \epsilon  \hspace{10mm} \epsilon \sim N(0,2.119^2)$$
+where $X_1$ is `year`, $X_2$ is `policy_index`, $X_3$ is `facility_density`, $X_4$ is `facilities_only_procedural`, $X_5$ is `facilities_only_medication`, $X_6$ is `facilities_both`, $X_7$ is `gestational_limit_procedural`, $X_8$ is `cost_medication`, and $X_9$ is `poverty`.
+
+From Table 4, we identify three variables with high GVIFs, `facilities_only_procedural`, `facilities_only_medication`, and `facilities_both`. All other variables have moderate GVIFs. Therefore, we exclude these three variables in our final model.
+
+```{r}
+linear_reg <- lm(abortion_rate_residence
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df1) 
+
+lm_highvif <- step(linear_reg, k = 2, trace=0)
+
+#summary(lm_highvif)
+#load the car library
+library(car)
+
+#calculate the VIF for each predictor variable in the model
+kable(vif(lm_highvif, type = "predictor")[,1:3], caption = "VIF Table of Regression for Abortion Rate")
+```
+
+
+For percentage of leaving, after model selection, we constructed regression with following formula:
+$$log(0.0000001 + \text{percentage of leaving}) = 62.5843773 -0.1891498  X_1 -0.5582952 X_2 -0.4930066 X_3 -0.5003502 X_4 \\$$
+$$-0.5031974 X_5 -0.0993845 X_6 +  0.0078566 X_7 -0.1003949 X_8 -0.0901593 X_9 + 0.0918488 X_{10} + 0.0870717  X_1 X_2\\$$
+$$-0.0003862 X_8 X_9 + \epsilon  \hspace{10mm} \epsilon \sim N(0,0.9-87^2)$$
+where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `facilities_only_procedural`, $X_4$ is `facilities_only_medication`, $X_5$ is `facilities_both`, $X_6$ is `gestational_limit_procedural`, $X_7$  is `accepts_insurance`, $X_8$ is `independent_clinics`, $X_9$ is `planned_parenthoods`, $X_{10}$ is `poverty`.
+
+From Table 5, we also identify three variables with high GVIFs, `facilities_only_procedural`, `facilities_only_medication`, and `facilities_both`. All other variables have moderate GVIFs. Therefore, we exclude these three variables in our final model.
+
+
+```{r}
+linear_reg2_log <- lm(log(0.0000001 + percentage_leaving)
+                 ~ .
+                 + policy_index * facility_density
+                 + facilities_only_medication * facilities_both
+                 + independent_clinics * planned_parenthoods
+                 + cost_medication * cost_first_trimester,
+                 data = df2) 
+
+lm2_log_highvif <- step(linear_reg2_log, k = 2, trace = 0)
+
+#summary(lm2_log_highvif)
+kable(vif(lm2_log_highvif, type = "predictor")[,1:3], caption = "VIF Table of Regression for Percentage of Leaving")
+```
+
+\newpage
+
+# References
+
+Addante, A. N., Eisenberg, D. L., Valentine, M. C., Leonard, J., Maddox,
+K. E. J., & Hoofnagle, M. H. (2021, March 26). *The association between
+state-level abortion restrictions and maternal mortality in the United
+States, 1995-2017.* Contraception.
+<https://www.sciencedirect.com/science/article/pii/S0010782421000901>
+
+Arnold, G. (2022, May 30). *The impact of targeted regulation of
+abortion providers laws on abortions and births - Journal of Population
+Economics.* SpringerLink.
+<https://link.springer.com/article/10.1007/s00148-022-00903-3>
+
+Austin, N., & Harper, S. (2018, April 1). *Assessing the impact of trap
+laws on abortion and women’s health in the USA: A systematic review.*
+BMJ Sexual & Reproductive Health.
+<https://srh.bmj.com/content/44/2/128.abstract>
+
+Centers for Disease Control and Prevention, National Center for Health
+Statistics (NCHS), National Vital Statistics System, “*aternal deaths
+and mortality rates: Each state, the District of Columbia, United
+States, 2018‐2020*
+
+Dehlendorf, Harris, & Weitz. (2013, October). *Disparities in Abortion Rates: A Public Health Approach.* 
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3780732/>
+
+Ellertson, C. (1997, August). *Mandatory parental involvement in minors’
+abortions: Effects of the laws in Minnesota, Missouri, and Indiana.*
+American journal of public health.
+<https://pubmed.ncbi.nlm.nih.gov/9279279/>
+
+Smith, M. H. (2022, June 1). *Abortion travel within the United States: An observational study of cross-state movement to obtain abortion care in 2017.* The Lancet Regional Health of Americas. <https://www.thelancet.com/journals/lanam/article/PIIS2667-193X(22)00031-X/fulltext>
+
+Smith, E., Ortiz, J., Thanhauser, L., Gray, A., Akpaka, N., Chowdhry,
+N., Jorawar, S., & Pelka, A. (2022, August 25). *Abortion laws by
+State.* Center for Reproductive Rights.
+<https://reproductiverights.org/maps/abortion-laws-by-state/>
+
+Wolfe, T., & van der Meulen Rodgers, Y. (2021, March 22). *Abortion
+during the COVID-19 pandemic: Racial disparities and barriers to care in
+the USA - Sexuality Research and Social Policy.* SpringerLink.
+<https://link.springer.com/article/10.1007/s13178-021-00569-8>
+
