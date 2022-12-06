@@ -485,11 +485,11 @@ From Figure 10, no obvious pattern is found and variance is constant in the resi
 
 ### Interpretations and findings from the model coefficients
 
-From Table 4, we find negative correlation (estimate = -0.18268, p-value = 0.00003) between percentage of leaving and policy index. Specifically, we find a 18.268 percent decrease in percentage of leaving for every one unit increase in policy index, holding all other variables constant.
+From Table 4, we find negative correlation (estimate = -0.18268, p-value = 0.00003) between log-transformed percentage of leaving and policy index. Specifically, we find a  $exp(0.18268) - 1 = 20.04$% decrease in percentage of leaving for every one unit increase in policy index, holding all other variables constant.
 
-We find significant negative correlation (estimate = -0.53778, p-value = 0.00192) between percentage of leaving and facility density. Also, we find negative correlation (estimate = -0.09338, p-value = 0.00194) between percentage of leaving and gestational limit for procedural abortion. Moreover, percentage of poverty is positively correlated with percentage of leaving (estimate = 0.08578, p-value = 0.01814), that is, increase in percentage of poverty is correlated with increase in percentage of leaving.
+Also, we find that for every one unit increase in facility density (estimate = -0.53778, p-value = 0.00192) and gestational limit for procedural abortion (estimate = -0.09338, p-value = 0.00194), percentage of laeving decreases $exp(0.53778) - 1 = 71.22$% and $exp(0.09338) - 1 = 9.78$% respectively, holding all other variables constant. Moreover, we find that for every one unit increase in percentage of poverty (estimate = 0.08578, p-value = 0.01814), percentage of leaving decreases $exp(0.08578) - 1 = 8.95$%, holding all other variables constant.
 
-In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods (estimate = -0.00041, p-value = 0.00005). We find that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by 0.041 percent.
+In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods (estimate = -0.00041, p-value = 0.00005). We find that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by $exp(0.00041) - 1 = 0.041$%.
 
 
 
@@ -502,7 +502,7 @@ However, our results also suggest that individuals in states with stricter abort
 In our study, one of the most alarming findings is that higher poverty rate is associated with higher abortion rate. This is similar to findings in previous studies that substantial disparities in abortion rates in the US, with low-income women having higher abortion rates than affluent women. Possible explanation might be the differences in effective use of contraception influencing disparities in unintended pregnancy; lack of sexual initiation among adolescents live; and differences in access to, quality of, and acceptability of family planning (Dehlendorf et al., 2013).
 
 
-# Limitations
+## Limitations
 
 Our study have several limitations. First, the assumption of independence is violated in our study due to repeated measures, which each state provides more than one data point. The use of intra-participant correlation is a potential solution. Second, we assign each state with only abortion policy index for 2017, due to lack of information about abortion policy for 2018 and 2019. However, it's unlikely for states to have substantial change in abortion policy within one or two years, and we've confirmed that abortion policy index for 2017 is same as for 2020.
 
