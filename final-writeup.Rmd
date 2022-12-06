@@ -485,11 +485,11 @@ From Figure 10, no obvious pattern is found and variance is constant in the resi
 
 ### Interpretations and findings from the model coefficients
 
-From Table 4, we find negative correlation (estimate = -0.18268, p-value = 0.00003) between log-transformed percentage of leaving and policy index. Specifically, we find a  $exp(0.18268) - 1 = 20.04$% decrease in percentage of leaving for every one unit increase in policy index, holding all other variables constant.
+From Table 4, we find negative correlation (estimate = -0.18268, p-value = 0.00003) between log-transformed percentage of leaving and policy index. Specifically, we find a 16.69% decrease ($exp(-0.18268) - 1 = -16.69$) in percentage of leaving for every one unit increase in policy index, holding all other variables constant.
 
-Also, we find that for every one unit increase in facility density (estimate = -0.53778, p-value = 0.00192) and gestational limit for procedural abortion (estimate = -0.09338, p-value = 0.00194), percentage of laeving decreases $exp(0.53778) - 1 = 71.22$% and $exp(0.09338) - 1 = 9.78$% respectively, holding all other variables constant. Moreover, we find that for every one unit increase in percentage of poverty (estimate = 0.08578, p-value = 0.01814), percentage of leaving decreases $exp(0.08578) - 1 = 8.95$%, holding all other variables constant.
+Also, we find that for every one unit increase in facility density (estimate = -0.53778, p-value = 0.00192) and gestational limit for procedural abortion (estimate = -0.09338, p-value = 0.00194), percentage of laeving decreases 41.59% ($exp(-0.53778) - 1 = -41.59$) and 8.91% ($exp(-0.09338) - 1 = -8.91$) respectively, holding all other variables constant. Moreover, we find that for every one unit increase in percentage of poverty (estimate = 0.08578, p-value = 0.01814), percentage of leaving increases $exp(0.08578) - 1 = 8.95$%, holding all other variables constant.
 
-In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods (estimate = -0.00041, p-value = 0.00005). We find that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by $exp(0.00041) - 1 = 0.041$%.
+In this model, we include the interaction between percentage of independent clinics and percentage of planned parenthoods (estimate = -0.00041, p-value = 0.00005). We find that each additional one unit of percentage of independent clinics decrease the effectiveness of percentage of planned parenthoods on percentage of leaving by 0.04% ($exp(-0.00041) - 1 = -0.04$).
 
 
 
