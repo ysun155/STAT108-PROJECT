@@ -342,9 +342,7 @@ The model is only reliable based on these assumptions:
 - Independence: All observations are independent.
 
 
-Based on Figure 6, we can identify the linear relationship between outcome variables (abortion rate / percentage of leaving) and our main independent variable of interest, policy index. Since our observations are independent states or observations with different years, we consider our data meets the assumption for independence in an acceptable level. 
-
-Therefore, we use MLR to examine the association between outcome variables (abortion rate / percentage of leaving) and policy index with other risk factors in the United States. One MLR is used for each outcome variables separately. For each regression model, we conduct model selection with Akaike information criterion (AIC) by removing variables without evidence of significance and adding new interaction terms. Also, Variance inflation factor (VIF) is checked for multicollinearity with the selected variables. After building the model, assumptions and evaluation metrices (R-squared, Adjusted R-squared, AIC, BIC) are assessed for model accuracy. Regression coefficient with p-value less than 0.05 is considered to be significant.
+Based on Figure 6, we can identify the linear relationship between outcome variables (abortion rate / percentage of leaving) and our main independent variable of interest, policy index. Therefore, we use MLR to examine the association between outcome variables (abortion rate / percentage of leaving) and policy index with other risk factors in the United States. One MLR is used for each outcome variables separately. For each regression model, we conduct model selection with Akaike information criterion (AIC) by removing variables without evidence of significance and adding new interaction terms. Also, Variance inflation factor (VIF) is checked for multicollinearity with the selected variables. After building the model, assumptions and evaluation metrices (R-squared, Adjusted R-squared, AIC, BIC) are assessed for model accuracy. Regression coefficient with p-value less than 0.05 is considered to be significant.
 
 
 ## Multiple Linear Regression for Abortion Rate
@@ -506,7 +504,7 @@ In our study, one of the most alarming findings is that higher poverty rate is a
 
 # Limitations
 
-Our study have several limitations. First, since our dataset is collected for continuous three years, this causes that we didn't completely meet one of the assumptions for MLR, independence. Second, we assign each state with only abortion policy index for 2017, due to lack of information about abortion policy for 2018 and 2019. However, it's unlikely for states to have substantial change in abortion policy within one or two years, and we've confirmed that abortion policy index for 2017 is same as for 2020.
+Our study have several limitations. First, the assumption of independence is violated in our study due to repeated measures, which each state provides more than one data point. The use of intra-participant correlation is a potential solution. Second, we assign each state with only abortion policy index for 2017, due to lack of information about abortion policy for 2018 and 2019. However, it's unlikely for states to have substantial change in abortion policy within one or two years, and we've confirmed that abortion policy index for 2017 is same as for 2020.
 
 # Conclusion
 
@@ -520,7 +518,7 @@ This study provides evidence that a highly restrictive state legislative climate
 Before log transformation on percentage of leaving, we tried with raw data. We constructed regression with following formula:
 $$\text{percentage of leaving} = 62.5843773 -0.1891498  X_1 -0.5582952 X_2 -0.4930066 X_3 -0.5003502 X_4 -0.5031974 X_5\\$$
 $$-0.0993845 X_6 +  0.0078566 X_7 -0.1003949 X_8 -0.0901593 X_9 + 0.0918488 X_{10} + 0.0870717  X_1 X_2\\$$
-$$-0.0003862 X_8 X_9 + \epsilon \hspace{10mm} \epsilon \sim N(0,0.9-87^2)$$
+$$-0.0003862 X_8 X_9 + \epsilon \hspace{10mm} \epsilon \sim N(0,0.9087^2)$$
 where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `facilities_only_procedural`, $X_4$ is `facilities_only_medication`, $X_5$ is `facilities_both`, $X_6$ is `gestational_limit_procedural`, $X_7$  is `accepts_insurance`, $X_8$ is `independent_clinics`, $X_9$ is `planned_parenthoods`, $X_{10}$ is `poverty`.
 
 From Figure 11, specific pattern is found. Fitted values less than 20 tend to have a decreasing trend in residuals. Therefore, based on these residuals, we can conclude that our model doesn't meet the assumption of homoscedasticity and we might need to transform data.
@@ -581,8 +579,8 @@ kable(vif(lm_highvif, type = "predictor")[,1:3], caption = "VIF Table of Regress
 For percentage of leaving, after model selection, we constructed regression with following formula:
 $$log(0.0000001 + \text{percentage of leaving}) = 62.5843773 -0.1891498  X_1 -0.5582952 X_2 -0.4930066 X_3 -0.5003502 X_4 \\$$
 $$-0.5031974 X_5 -0.0993845 X_6 +  0.0078566 X_7 -0.1003949 X_8 -0.0901593 X_9 + 0.0918488 X_{10} + 0.0870717  X_1 X_2\\$$
-$$-0.0003862 X_8 X_9 + \epsilon  \hspace{10mm} \epsilon \sim N(0,0.9-87^2)$$
-where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `facilities_only_procedural`, $X_4$ is `facilities_only_medication`, $X_5$ is `facilities_both`, $X_6$ is `gestational_limit_procedural`, $X_7$  is `accepts_insurance`, $X_8$ is `independent_clinics`, $X_9$ is `planned_parenthoods`, $X_{10}$ is `poverty`.
+$$-0.0003862 X_8 X_9 + \epsilon  \hspace{10mm} \epsilon \sim N(0,0.9087^2)$$
+where $X_1$ is `policy_index`, $X_2$ is `facility_density`, $X_3$ is `facilities_only_procedural`, $X_4$ is `facilities_only_medication`, $X_5$ is `facilities_both`, $X_6$ is `gestational_limit_procedural`, $X_7$  is `accepts_insurance`, $X_8$ is `independent_clinics`, $X_9$ is `planned_parenthoods`, and $X_{10}$ is `poverty`.
 
 From Table 5, we also identify three variables with high GVIFs, `facilities_only_procedural`, `facilities_only_medication`, and `facilities_both`. All other variables have moderate GVIFs. Therefore, we exclude these three variables in our final model.
 
